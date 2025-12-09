@@ -1,420 +1,635 @@
 ---
-title: "Cursor setup"
-description: "Configure Cursor for your documentation workflow"
+title: "Cursor Setup for JoggAI Docs"
+description: "Configure Cursor for JoggAI API documentation workflow"
 icon: "arrow-pointer"
 ---
 
-Use Cursor to help write and maintain your documentation. This guide shows how to configure Cursor for better results on technical writing tasks and using Mintlify components.
+Use Cursor to help write and maintain JoggAI API documentation. This guide shows how to configure Cursor for technical writing tasks following our specific documentation standards.
 
 ## Prerequisites
 
 - Cursor editor installed
-- Access to your documentation repository
+- Access to JoggAI documentation repository
+- Node.js 20.17+ for Mintlify
 
-## Project rules
+## Project Rules
 
-Create project rules that all team members can use. In your documentation repository root:
-
-```bash
-mkdir -p .cursor
-```
-
-Create `.cursor/rules.md`:
+Create `.cursor/rules.md` in your documentation repository root:
 
 ````markdown
-# Mintlify technical writing rule
+# JoggAI API Documentation Rules
 
-You are an AI writing assistant specialized in creating exceptional technical documentation using Mintlify components and following industry-leading technical writing practices.
+You are an AI writing assistant specialized in creating exceptional technical documentation for the JoggAI API using Mintlify components.
 
-## Core writing principles
+## JoggAI Documentation Standards
 
-### Language and style requirements
+### Core Requirements
 
-- Use clear, direct language appropriate for technical audiences
-- Write in second person ("you") for instructions and procedures
-- Use active voice over passive voice
-- Employ present tense for current states, future tense for outcomes
-- Avoid jargon unless necessary and define terms when first used
-- Maintain consistent terminology throughout all documentation
-- Keep sentences concise while providing necessary context
-- Use parallel structure in lists, headings, and procedures
+- **Language**: English only
+- **Code format**: bash/curl ONLY (no other languages)
+- **Diagrams**: Mermaid sequence diagrams for workflows
+- **Structure**: Follow the standard workflow template
+- **Length**: Keep documents under 500 lines (split if longer)
+- **Components**: Use Mintlify MDX components consistently
 
-### Content organization standards
+### Document Organization
 
-- Lead with the most important information (inverted pyramid structure)
-- Use progressive disclosure: basic concepts before advanced ones
-- Break complex procedures into numbered steps
-- Include prerequisites and context before instructions
-- Provide expected outcomes for each major step
-- Use descriptive, keyword-rich headings for navigation and SEO
-- Group related information logically with clear section breaks
-
-### User-centered approach
-
-- Focus on user goals and outcomes rather than system features
-- Anticipate common questions and address them proactively
-- Include troubleshooting for likely failure points
-- Write for scannability with clear headings, lists, and white space
-- Include verification steps to confirm success
-
-## Mintlify component reference
-
-### Callout components
-
-#### Note - Additional helpful information
-
-<Note>
-Supplementary information that supports the main content without interrupting flow
-</Note>
-
-#### Tip - Best practices and pro tips
-
-<Tip>
-Expert advice, shortcuts, or best practices that enhance user success
-</Tip>
-
-#### Warning - Important cautions
-
-<Warning>
-Critical information about potential issues, breaking changes, or destructive actions
-</Warning>
-
-#### Info - Neutral contextual information
-
-<Info>
-Background information, context, or neutral announcements
-</Info>
-
-#### Check - Success confirmations
-
-<Check>
-Positive confirmations, successful completions, or achievement indicators
-</Check>
-
-### Code components
-
-#### Single code block
-
-Example of a single code block:
-
-```javascript config.js
-const apiConfig = {
-  baseURL: 'https://api.example.com',
-  timeout: 5000,
-  headers: {
-    'Authorization': `Bearer ${process.env.API_TOKEN}`
-  }
-};
+**File Structure:**
+```
+api-reference/
+├── joggai-introduction.mdx
+├── openapi-v2.yaml
+└── workflows/
+    ├── {workflow-name}.mdx           # Single-scenario workflows
+    └── {feature-name}/               # Multi-scenario workflows
+        ├── {feature-name}-overview.mdx
+        ├── {feature-name}-scenario-1.mdx
+        └── {feature-name}-scenario-2.mdx
 ```
 
-#### Code group with multiple languages
+**When to split documents:**
+- Document exceeds 500 lines
+- Multiple distinct scenarios exist
+- Each scenario needs detailed explanation
+- Use consistent file prefix: `{group-name}-{scenario}.mdx`
 
-Example of a code group:
+## Standard Workflow Template
 
-<CodeGroup>
-```javascript Node.js
-const response = await fetch('/api/endpoint', {
-  headers: { Authorization: `Bearer ${apiKey}` }
-});
-```
+Every workflow document MUST follow this structure:
 
-```python Python
-import requests
-response = requests.get('/api/endpoint', 
-  headers={'Authorization': f'Bearer {api_key}'})
-```
+```mdx
+---
+title: "Clear, Actionable Title"
+description: "One-sentence description of what this accomplishes"
+---
 
-```curl cURL
-curl -X GET '/api/endpoint' \
-  -H 'Authorization: Bearer YOUR_API_KEY'
-```
-</CodeGroup>
+## Introduction
 
-#### Request/response examples
-
-Example of request/response documentation:
-
-<RequestExample>
-```bash cURL
-curl -X POST 'https://api.example.com/users' \
-  -H 'Content-Type: application/json' \
-  -d '{"name": "John Doe", "email": "john@example.com"}'
-```
-</RequestExample>
-
-<ResponseExample>
-```json Success
-{
-  "id": "user_123",
-  "name": "John Doe", 
-  "email": "john@example.com",
-  "created_at": "2024-01-15T10:30:00Z"
-}
-```
-</ResponseExample>
-
-### Structural components
-
-#### Steps for procedures
-
-Example of step-by-step instructions:
-
-<Steps>
-<Step title="Install dependencies">
-  Run `npm install` to install required packages.
-  
-  <Check>
-  Verify installation by running `npm list`.
-  </Check>
-</Step>
-
-<Step title="Configure environment">
-  Create a `.env` file with your API credentials.
-  
-  ```bash
-  API_KEY=your_api_key_here
-  ```
-  
-  <Warning>
-  Never commit API keys to version control.
-  </Warning>
-</Step>
-</Steps>
-
-#### Tabs for alternative content
-
-Example of tabbed content:
-
-<Tabs>
-<Tab title="macOS">
-  ```bash
-  brew install node
-  npm install -g package-name
-  ```
-</Tab>
-
-<Tab title="Windows">
-  ```powershell
-  choco install nodejs
-  npm install -g package-name
-  ```
-</Tab>
-
-<Tab title="Linux">
-  ```bash
-  sudo apt install nodejs npm
-  npm install -g package-name
-  ```
-</Tab>
-</Tabs>
-
-#### Accordions for collapsible content
-
-Example of accordion groups:
-
-<AccordionGroup>
-<Accordion title="Troubleshooting connection issues">
-  - **Firewall blocking**: Ensure ports 80 and 443 are open
-  - **Proxy configuration**: Set HTTP_PROXY environment variable
-  - **DNS resolution**: Try using 8.8.8.8 as DNS server
-</Accordion>
-
-<Accordion title="Advanced configuration">
-  ```javascript
-  const config = {
-    performance: { cache: true, timeout: 30000 },
-    security: { encryption: 'AES-256' }
-  };
-  ```
-</Accordion>
-</AccordionGroup>
-
-### Cards and columns for emphasizing information
-
-Example of cards and card groups:
-
-<Card title="Getting started guide" icon="rocket" href="/quickstart">
-Complete walkthrough from installation to your first API call in under 10 minutes.
-</Card>
+Brief overview with benefits using CardGroup (cols={2}).
 
 <CardGroup cols={2}>
-<Card title="Authentication" icon="key" href="/auth">
-  Learn how to authenticate requests using API keys or JWT tokens.
-</Card>
-
-<Card title="Rate limiting" icon="clock" href="/rate-limits">
-  Understand rate limits and best practices for high-volume usage.
-</Card>
+  <Card title="Benefit 1" icon="icon-name">
+    Description of the benefit
+  </Card>
+  <Card title="Benefit 2" icon="icon-name">
+    Another key benefit
+  </Card>
 </CardGroup>
 
-### API documentation components
+## Workflow Overview
 
-#### Parameter fields
-
-Example of parameter documentation:
-
-<ParamField path="user_id" type="string" required>
-Unique identifier for the user. Must be a valid UUID v4 format.
-</ParamField>
-
-<ParamField body="email" type="string" required>
-User's email address. Must be valid and unique within the system.
-</ParamField>
-
-<ParamField query="limit" type="integer" default="10">
-Maximum number of results to return. Range: 1-100.
-</ParamField>
-
-<ParamField header="Authorization" type="string" required>
-Bearer token for API authentication. Format: `Bearer YOUR_API_KEY`
-</ParamField>
-
-#### Response fields
-
-Example of response field documentation:
-
-<ResponseField name="user_id" type="string" required>
-Unique identifier assigned to the newly created user.
-</ResponseField>
-
-<ResponseField name="created_at" type="timestamp">
-ISO 8601 formatted timestamp of when the user was created.
-</ResponseField>
-
-<ResponseField name="permissions" type="array">
-List of permission strings assigned to this user.
-</ResponseField>
-
-#### Expandable nested fields
-
-Example of nested field documentation:
-
-<ResponseField name="user" type="object">
-Complete user object with all associated data.
-
-<Expandable title="User properties">
-  <ResponseField name="profile" type="object">
-  User profile information including personal details.
-  
-  <Expandable title="Profile details">
-    <ResponseField name="first_name" type="string">
-    User's first name as entered during registration.
-    </ResponseField>
+```mermaid
+sequenceDiagram
+    participant Client
+    participant API
+    participant System
     
-    <ResponseField name="avatar_url" type="string | null">
-    URL to user's profile picture. Returns null if no avatar is set.
-    </ResponseField>
-  </Expandable>
-  </ResponseField>
-</Expandable>
-</ResponseField>
-
-### Media and advanced components
-
-#### Frames for images
-
-Wrap all images in frames:
-
-<Frame>
-<img src="/images/dashboard.png" alt="Main dashboard showing analytics overview" />
-</Frame>
-
-<Frame caption="The analytics dashboard provides real-time insights">
-<img src="/images/analytics.png" alt="Analytics dashboard with charts" />
-</Frame>
-
-#### Videos
-
-Use the HTML video element for self-hosted video content:
-
-<video
-  controls
-  className="w-full aspect-video rounded-xl"
-  src="link-to-your-video.com"
-></video>
-
-Embed YouTube videos using iframe elements:
-
-<iframe
-  className="w-full aspect-video rounded-xl"
-  src="https://www.youtube.com/embed/4KzFe50RQkQ"
-  title="YouTube video player"
-  frameBorder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-  allowFullScreen
-></iframe>
-
-#### Tooltips
-
-Example of tooltip usage:
-
-<Tooltip tip="Application Programming Interface - protocols for building software">
-API
-</Tooltip>
-
-#### Updates
-
-Use updates for changelogs:
-
-<Update label="Version 2.1.0" description="Released March 15, 2024">
-## New features
-- Added bulk user import functionality
-- Improved error messages with actionable suggestions
-
-## Bug fixes
-- Fixed pagination issue with large datasets
-- Resolved authentication timeout problems
-</Update>
-
-## Required page structure
-
-Every documentation page must begin with YAML frontmatter:
-
-```yaml
----
-title: "Clear, specific, keyword-rich title"
-description: "Concise description explaining page purpose and value"
----
+    Note over Client,System: 1. Step Description
+    Client->>API: POST /endpoint
+    API-->>Client: {task_id}
+    
+    Note over System: 2. Processing
+    
+    Note over Client,System: 3. Get Result
+    Client->>API: GET /result/{task_id}
+    API-->>Client: {data}
 ```
 
-## Content quality standards
+## Quick Start
 
-### Code examples requirements
+Simple example to get users started quickly.
 
-- Always include complete, runnable examples that users can copy and execute
-- Show proper error handling and edge case management
-- Use realistic data instead of placeholder values
-- Include expected outputs and results for verification
-- Test all code examples thoroughly before publishing
-- Specify language and include filename when relevant
-- Add explanatory comments for complex logic
-- Never include real API keys or secrets in code examples
+### Create Request
 
-### API documentation requirements
+```bash
+curl --request POST \
+  --url 'https://api.jogg.ai/open/v2/endpoint' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "key": "value"
+  }'
+```
 
-- Document all parameters including optional ones with clear descriptions
-- Show both success and error response examples with realistic data
-- Include rate limiting information with specific limits
-- Provide authentication examples showing proper format
-- Explain all HTTP status codes and error handling
-- Cover complete request/response cycles
+**Response:**
 
-### Accessibility requirements
+```json
+{
+  "code": 0,
+  "msg": "success",
+  "data": {
+    "result": "value"
+  }
+}
+```
 
-- Include descriptive alt text for all images and diagrams
-- Use specific, actionable link text instead of "click here"
-- Ensure proper heading hierarchy starting with H2
-- Provide keyboard navigation considerations
-- Use sufficient color contrast in examples and visuals
-- Structure content for easy scanning with headers and lists
+## Complete Workflow
 
-## Component selection logic
+<Steps>
+  <Step title="First Action">
+    Detailed explanation with code.
+    
+    ```bash
+    curl command
+    ```
+    
+    **Response:**
+    ```json
+    {...}
+    ```
+  </Step>
+  
+  <Step title="Second Action">
+    Next step with full details.
+  </Step>
+</Steps>
 
-- Use **Steps** for procedures and sequential instructions
-- Use **Tabs** for platform-specific content or alternative approaches
-- Use **CodeGroup** when showing the same concept in multiple programming languages
-- Use **Accordions** for progressive disclosure of information
-- Use **RequestExample/ResponseExample** specifically for API endpoint documentation
-- Use **ParamField** for API parameters, **ResponseField** for API responses
-- Use **Expandable** for nested object properties or hierarchical information
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Practice Name">
+    Explanation and recommendations.
+  </Accordion>
+</AccordionGroup>
+
+## Common Issues
+
+<AccordionGroup>
+  <Accordion title="Problem Description">
+    **Problem:** What goes wrong
+    
+    **Solution:** How to fix it step by step.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Related Workflow"
+    icon="icon-name"
+    href="/path/to/workflow"
+  >
+    Description of related content
+  </Card>
+</CardGroup>
+
+## Need Help?
+
+For questions about [topic], contact us at [support@jogg.ai](mailto:support@jogg.ai)
+```
+
+## Code Examples - CRITICAL RULES
+
+### ✅ ALWAYS Use bash/curl Format
+
+JoggAI documentation uses ONLY bash/curl for consistency:
+
+```bash
+curl --request POST \
+  --url 'https://api.jogg.ai/open/v2/create_video_from_avatar' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "script": "Your video script here",
+    "avatar_id": 127,
+    "voice_id": "en-US-ChristopherNeural",
+    "aspect_ratio": 0
+  }'
+```
+
+### ❌ NEVER Use Other Languages
+
+**Don't use:**
+- Python, JavaScript, Go, etc.
+- CodeGroup with multiple languages
+- Language-specific SDKs
+
+**Reason:** Consistency across all documentation. Users can adapt curl examples to any language.
+
+### Breaking Down Large Examples
+
+Instead of one huge curl command, break into steps:
+
+```bash
+# Step 1: Upload media
+curl -X POST 'https://api.jogg.ai/open/v2/upload/asset' \
+  -H 'x-api-key: YOUR_API_KEY' \
+  -F 'file=@image.jpg'
+
+# Step 2: Use uploaded asset
+curl -X POST 'https://api.jogg.ai/open/v2/create_video' \
+  -H 'x-api-key: YOUR_API_KEY' \
+  -d '{"asset_id": "aud_abc123"}'
+```
+
+### Response Examples
+
+Always show expected responses:
+
+```json
+{
+  "code": 0,
+  "msg": "success",
+  "data": {
+    "project_id": "vid_abc123",
+    "status": "processing"
+  }
+}
+```
+
+## Mermaid Sequence Diagrams
+
+Use sequence diagrams to visualize workflows:
+
+````markdown
+```mermaid
+sequenceDiagram
+    participant Client
+    participant API
+    participant AI
+    participant Queue
+    
+    Note over Client,Queue: 1. Submit Request
+    Client->>API: POST /create_video
+    API->>Queue: Queue task
+    API-->>Client: {video_id}
+    
+    Note over Queue: 2. AI Processing (2-5 min)
+    
+    Note over Client,Queue: 3. Get Result
+    Client->>API: GET /video/{id}
+    API-->>Client: {video_url}
+```
+````
+
+**Guidelines:**
+- Use participant labels: Client, API, AI, Queue, System
+- Add `Note over` for step descriptions
+- Show async processing clearly
+- Include timing estimates
+
+## MDX Component Rules - CRITICAL
+
+### ⚠️ Lists in Components - Common Error
+
+**❌ WRONG - Causes parsing errors:**
+
+```mdx
+<Accordion title="Solutions">
+**Problem:** Description
+
+**Solutions:**
+- Item 1
+- Item 2
+</Accordion>
+```
+
+**Error:** `Expected closing tag </Accordion> after listItem`
+
+**✅ CORRECT - Use paragraph descriptions:**
+
+```mdx
+<Accordion title="Solutions">
+**Problem:** Description
+
+**Solution:** First do this. Then do that. Finally, complete the process.
+</Accordion>
+```
+
+**✅ CORRECT - Add proper separation:**
+
+```mdx
+<Step title="Requirements">
+Ensure you have the following ready.
+
+Required items:
+- Item 1
+- Item 2
+- Item 3
+
+</Step>
+```
+
+### Component Usage Guidelines
+
+#### Steps - For Sequential Instructions
+
+```mdx
+<Steps>
+  <Step title="Action Name">
+    Clear explanation. Include code and responses.
+    
+    ```bash
+    curl command
+    ```
+  </Step>
+  
+  <Step title="Next Action">
+    Continue the flow.
+  </Step>
+</Steps>
+```
+
+#### Accordions - For Collapsible Details
+
+```mdx
+<AccordionGroup>
+  <Accordion title="Topic">
+    Content that can be collapsed. Use paragraph descriptions, not lists directly after colons.
+  </Accordion>
+</AccordionGroup>
+```
+
+#### Cards - For Navigation
+
+```mdx
+<CardGroup cols={2}>
+  <Card
+    title="Feature Name"
+    icon="icon-name"
+    href="/path"
+  >
+    Brief description
+  </Card>
+</CardGroup>
+```
+
+**Common icons:**
+- `user`, `video`, `image`, `upload`, `microphone`
+- `wand-magic-sparkles`, `language`, `webhook`
+- `camera`, `film`, `music`, `globe`
+
+#### Callouts - For Important Info
+
+```mdx
+<Note>Standard information or context</Note>
+
+<Info>Helpful tips</Info>
+
+<Warning>Important cautions or limitations</Warning>
+
+<Tip>Pro tips and best practices</Tip>
+
+<Check>Success confirmations</Check>
+```
+
+## Navigation and Linking
+
+### Internal Links
+
+**Workflow documents:**
+```mdx
+[Avatar Videos](/api-reference/workflows/avatar-videos/avatar-videos-overview)
+```
+
+**API Reference (auto-generated):**
+```mdx
+For detailed API specifications, refer to the **Video Creation** section in the API Reference tab.
+```
+
+**❌ Don't** link directly to auto-generated API pages (URLs may change):
+```mdx
+<!-- Don't do this -->
+[API Endpoint](/api-reference/video/create-talking-avatar-video)
+```
+
+### Navigation Groups in docs.json
+
+For multi-scenario workflows:
+
+```json
+{
+  "group": "Feature Name",
+  "pages": [
+    "api-reference/workflows/feature-name/feature-name-overview",
+    "api-reference/workflows/feature-name/feature-name-scenario-1",
+    "api-reference/workflows/feature-name/feature-name-scenario-2"
+  ]
+}
+```
+
+## Writing Style
+
+### Language Requirements
+
+- **Active voice**: "Create a video" not "A video is created"
+- **Present tense**: "The API returns" not "The API will return"
+- **Second person**: "You can" not "One can" or "Users can"
+- **Concise**: Remove unnecessary words
+- **Specific**: "2-5 minutes" not "a few minutes"
+
+### Technical Terms
+
+- **Avatar** (not "digital person" or "virtual avatar")
+- **Video** (not "clip" or "content")
+- **Script** (not "text" or "narration")
+- **API key** (not "token" or "credential")
+- **Webhook** (not "callback" or "notification endpoint")
+
+### Common Patterns
+
+**Parameters table:**
+```mdx
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `script` | string | Yes | Video script text (max 5000 characters) |
+| `avatar_id` | number | Yes | Avatar ID from library |
+```
+
+**Status codes:**
+```mdx
+| Status | Description | Next Action |
+|--------|-------------|-------------|
+| `pending` | Task queued | Wait for processing |
+| `processing` | In progress | Continue polling |
+| `completed` | Finished | Download result |
+| `failed` | Error occurred | Check error message |
+```
+
+## Quality Checklist
+
+Before publishing any documentation:
+
+- [ ] Follows standard workflow template structure
+- [ ] Uses ONLY bash/curl for code examples
+- [ ] Includes mermaid sequence diagram
+- [ ] All code examples tested and working
+- [ ] No lists directly after colons in components
+- [ ] Internal links use correct paths
+- [ ] No direct links to auto-generated API pages
+- [ ] Callout components used appropriately
+- [ ] Document under 500 lines (or split into group)
+- [ ] Frontmatter includes title and description
+- [ ] All JSON responses properly formatted
+- [ ] No placeholder values without explanation
+
+## Common Mistakes to Avoid
+
+### ❌ DON'T
+
+1. **Mix code languages**
+   ```mdx
+   <!-- Wrong -->
+   <CodeGroup>
+   ```python Python
+   import requests
+   ```
+   ```javascript JavaScript  
+   fetch(...)
+   ```
+   </CodeGroup>
+   ```
+
+2. **Use lists after colons in components**
+   ```mdx
+   <!-- Wrong -->
+   <Accordion title="...">
+   **Solutions:**
+   - Item 1
+   </Accordion>
+   ```
+
+3. **Hard-code API Reference URLs**
+   ```mdx
+   <!-- Wrong -->
+   [Create Video API](/api-reference/video/create-talking-avatar-video)
+   ```
+
+4. **Create documents over 500 lines**
+   - Split into overview + scenario documents
+
+5. **Forget frontmatter**
+   ```mdx
+   <!-- Wrong -->
+   # My Page
+   
+   <!-- Right -->
+   ---
+   title: "My Page"
+   description: "Page description"
+   ---
+   ```
+
+### ✅ DO
+
+1. **Use bash/curl consistently**
+2. **Convert lists to paragraphs in components**
+3. **Reference API sections generically**
+4. **Split large documents into groups**
+5. **Always include frontmatter**
+6. **Test all code examples**
+7. **Add mermaid diagrams for workflows**
+8. **Use consistent file prefixes in groups**
+
+## File Organization
+
+### Single Workflow (< 500 lines)
+
+```
+api-reference/workflows/
+└── workflow-name.mdx
+```
+
+### Multi-Scenario Workflow (> 500 lines)
+
+```
+api-reference/workflows/
+└── feature-name/
+    ├── feature-name-overview.mdx
+    ├── feature-name-scenario-1.mdx
+    ├── feature-name-scenario-2.mdx
+    └── feature-name-scenario-3.mdx
+```
+
+**File naming rules:**
+- Use consistent prefix: `{feature-name}-{scenario}`
+- Always include overview document
+- Keep names descriptive but concise
+- Use lowercase with hyphens
+
+## Current Documentation Structure
+
+### Workflow Guides (Single Documents)
+
+- `ai-scripts.mdx` - AI script generation
+- `create-photo-avatar.mdx` - Photo avatar creation
+- `create-video-from-product.mdx` - Product video generation
+- `create-video-from-template.mdx` - Template-based videos
+- `video-translation.mdx` - Video translation
+- `webhook-integration.mdx` - Webhook setup
+
+### Avatar Videos Group (4 documents)
+
+- `avatar-videos-overview.mdx` - Introduction
+- `avatar-videos-with-photo-avatar.mdx` - Photo avatar scenario
+- `avatar-videos-with-audio-source.mdx` - Custom audio scenario
+- `avatar-videos-transparent-background.mdx` - Transparent background scenario
+
+### Upload Media Group (4 documents)
+
+- `upload-media-overview.mdx` - Introduction
+- `upload-media-images.mdx` - Image uploads
+- `upload-media-videos.mdx` - Video uploads
+- `upload-media-audio.mdx` - Audio uploads
+
+## API Reference
+
+The API reference is auto-generated from `openapi-v2.yaml`:
+
+**Structure:**
+```yaml
+tags:
+  - name: video
+    description: Video creation and management
+  - name: avatar
+    description: Avatar operations
+
+paths:
+  /open/v2/create_video_from_avatar:
+    post:
+      tags: [video]
+      summary: Create Talking Avatar Video
+```
+
+**Mintlify URL format:**
+```
+/api-reference/{tag}/{summary-slug}
+Example: /api-reference/video/create-talking-avatar-video
+```
+
+## Testing Requirements
+
+Before committing:
+
+```bash
+# Start Mintlify dev server
+mintlify dev
+
+# Check for:
+# ✓ No parsing errors
+# ✓ All pages load
+# ✓ Navigation works
+# ✓ Links functional
+# ✓ Code blocks render
+# ✓ Mermaid diagrams display
+# ✓ No console errors
+```
+
+## Resources
+
+- [Mintlify Components](https://mintlify.com/docs/content/components)
+- [Mermaid Sequence Diagrams](https://mermaid.js.org/syntax/sequenceDiagram.html)
+- [JoggAI API Docs](https://docs.jogg.ai/api-reference)
+- [Documentation Guide](.github/DOCUMENTATION_GUIDE.md)
+
+## Support
+
+For documentation questions:
+- Email: support@jogg.ai
+- Discord: https://discord.gg/RwrwZcSRCq
+
+---
+
+Remember: Consistency is key. Follow these rules strictly for all JoggAI API documentation.
 ````

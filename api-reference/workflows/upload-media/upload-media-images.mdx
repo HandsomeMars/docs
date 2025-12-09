@@ -1,0 +1,109 @@
+---
+title: "Upload Images"
+description: "Upload JPG, PNG, WebP, and GIF images for use in your videos"
+---
+
+## Supported Formats
+
+| Format | Max Size | Recommended | Use Case |
+|--------|----------|-------------|----------|
+| **JPG** | 10MB | 1920x1080+ | Photos, product images |
+| **PNG** | 10MB | 1920x1080+ | Images with transparency |
+| **WebP** | 10MB | 1920x1080+ | Modern, efficient format |
+| **GIF** | 10MB | 1920x1080 | Animated images |
+
+## Upload Image
+
+```bash
+curl --request POST \
+  --url 'https://api.jogg.ai/open/v2/upload/asset' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'Content-Type: multipart/form-data' \
+  --form 'file=@/path/to/image.jpg' \
+  --form 'asset_type=image' \
+  --form 'name=Product Banner'
+```
+
+## Best Practices
+
+**Resolution**
+- Minimum: 1280x720 (720p)
+- Recommended: 1920x1080 (1080p)
+- Max: 3840x2160 (4K)
+
+**Quality vs Size**
+- JPG: 80-90% quality is optimal
+- PNG: Use only when transparency needed
+- WebP: Best compression, not all tools support
+- Compress images before upload
+
+**Optimization Tips**
+```bash
+# Using ImageMagick
+convert input.jpg -resize 1920x1080 -quality 85 output.jpg
+
+# Using online tools
+- TinyPNG (tinypng.com)
+- Squoosh (squoosh.app)
+```
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Background Images" icon="image">
+    Use as video backgrounds
+    ```json
+    "background_image": "img_abc123"
+    ```
+  </Card>
+  
+  <Card title="Product Photos" icon="shopping-bag">
+    Showcase products in videos
+  </Card>
+  
+  <Card title="Logos & Branding" icon="copyright">
+    Add company logos and branding elements
+  </Card>
+  
+  <Card title="Custom Graphics" icon="palette">
+    Include custom graphics and illustrations
+  </Card>
+</CardGroup>
+
+## Common Issues
+
+**Image Quality Poor**
+- Upload higher resolution original
+- Avoid upscaling low-res images
+- Use at least 1920x1080
+
+**File Too Large**
+- Compress to 80-85% quality
+- Resize to target resolution
+- Convert PNG to JPG if no transparency needed
+
+**Transparency Not Working**
+- Use PNG format
+- Ensure alpha channel is preserved
+- Test in image viewer first
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Upload Videos"
+    icon="film"
+    href="/api-reference/workflows/upload-media/upload-media-videos"
+  >
+    Learn about video uploads
+  </Card>
+  
+  <Card
+    title="Upload Audio"
+    icon="music"
+    href="/api-reference/workflows/upload-media/upload-media-audio"
+  >
+    Upload audio files
+  </Card>
+</CardGroup>
+

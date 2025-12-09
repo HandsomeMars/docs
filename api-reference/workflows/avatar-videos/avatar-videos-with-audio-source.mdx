@@ -1,0 +1,316 @@
+---
+title: "Create Avatar Videos with Custom Audio"
+description: "Use your own audio file as the voice for your avatar instead of text-to-speech"
+---
+
+## Introduction
+
+Instead of using text-to-speech, you can provide your own audio file (voice recording, music, etc.) as the voice source for your avatar video. This gives you full control over the voice, timing, and delivery.
+
+<CardGroup cols={2}>
+  <Card title="Your Voice" icon="microphone">
+    Use your own voice recordings
+  </Card>
+  <Card title="Professional VO" icon="headphones">
+    Use professional voice-over artists
+  </Card>
+  <Card title="Multiple Languages" icon="language">
+    Support any language or dialect
+  </Card>
+  <Card title="Perfect Timing" icon="clock">
+    Control exact pacing and delivery
+  </Card>
+</CardGroup>
+
+## When to Use Custom Audio
+
+✅ **Use custom audio when**:
+- You want to use your own voice
+- You have professional voice-over recordings
+- You need specific intonation or emotion
+- Text-to-speech doesn't support your dialect
+- You want music or sound effects
+
+❌ **Use text-to-speech when**:
+- You need quick generation
+- You want easy script updates
+- You don't have audio recording equipment
+- Multiple languages with same script
+
+## Prerequisites
+
+Before creating videos with custom audio:
+
+1. ✅ Upload your audio file (see [Upload Media](/api-reference/workflows/upload-media/upload-media-audio))
+2. ✅ Get the `asset_id` of the uploaded audio
+3. ✅ Choose your avatar
+
+## Quick Start
+
+### Step 1: Upload Your Audio
+
+```bash
+curl --request POST \
+  --url 'https://api.jogg.ai/open/v2/upload/asset' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'Content-Type: multipart/form-data' \
+  --form 'file=@/path/to/your/audio.mp3' \
+  --form 'asset_type=audio' \
+  --form 'name=My Voice Recording'
+```
+
+**Response:**
+
+```json
+{
+  "code": 0,
+  "data": {
+    "asset_id": "aud_abc123",
+    "asset_url": "https://res.jogg.ai/assets/aud_abc123.mp3",
+    "duration": 45
+  }
+}
+```
+
+<Check>
+  Save the `asset_id` to use in video creation!
+</Check>
+
+### Step 2: Create Video with Custom Audio
+
+```bash
+curl --request POST \
+  --url 'https://api.jogg.ai/open/v2/create_video_from_avatar' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "avatar_id": 127,
+    "aspect_ratio": 0,
+    "screen_style": 0,
+    "audio_source": "aud_abc123"
+  }'
+```
+
+<Warning>
+  When using `audio_source`, do NOT include `script` or `voice_id` parameters. The audio file replaces text-to-speech entirely.
+</Warning>
+
+**Response:**
+
+```json
+{
+  "code": 0,
+  "msg": "success",
+  "data": {
+    "project_id": "vid_abc123"
+  }
+}
+```
+
+### Step 3: Retrieve the Video
+
+```bash
+curl --request GET \
+  --url 'https://api.jogg.ai/open/v2/avatar_video/vid_abc123' \
+  --header 'x-api-key: YOUR_API_KEY'
+```
+
+## Parameter Differences
+
+| Parameter | With Text-to-Speech | With Custom Audio |
+|-----------|---------------------|-------------------|
+| `script` | ✅ Required | ❌ Not allowed |
+| `voice_id` | ✅ Required | ❌ Not allowed |
+| `audio_source` | ❌ Not allowed | ✅ Required |
+| `avatar_id` | ✅ Required | ✅ Required |
+| `aspect_ratio` | ✅ Required | ✅ Required |
+| `caption` | ✅ Optional | ⚠️ Use with caution* |
+
+*Captions with custom audio require manual subtitle file upload
+
+## Audio Requirements
+
+### Supported Formats
+
+| Format | Max Size | Max Duration | Recommended |
+|--------|----------|--------------|-------------|
+| MP3 | 20MB | 10 minutes | ✅ Best compatibility |
+| WAV | 20MB | 10 minutes | High quality |
+| M4A | 20MB | 10 minutes | Good quality |
+
+### Quality Guidelines
+
+**Bitrate**: 128-320 kbps  
+**Sample Rate**: 44.1 kHz or 48 kHz  
+**Channels**: Mono or Stereo  
+**File Size**: Smaller is better (compress if possible)
+
+<Tip>
+  For best results, use MP3 at 192 kbps - it's a good balance between quality and file size.
+</Tip>
+
+## Complete Workflow Example
+
+<Steps>
+  <Step title="Record Your Audio">
+Record your voice or prepare your audio file. Ensure minimal background noise and appropriate volume levels (not too quiet or too loud). Save as MP3, WAV, or M4A format.
+
+  </Step>
+  
+  <Step title="Upload Audio">
+```bash
+curl -X POST 'https://api.jogg.ai/open/v2/upload/asset' \
+  -H 'x-api-key: YOUR_API_KEY' \
+  -F 'file=@my_voice.mp3' \
+  -F 'asset_type=audio' \
+  -F 'name=Product Demo Voice'
+```
+
+Get `asset_id` from response.
+  </Step>
+  
+  <Step title="Select Avatar">
+Choose an avatar from the library:
+
+```bash
+curl -X GET 'https://api.jogg.ai/open/v2/avatars/public' \
+  -H 'x-api-key: YOUR_API_KEY'
+```
+  </Step>
+  
+  <Step title="Create Video">
+Create video with your audio:
+
+```bash
+curl -X POST 'https://api.jogg.ai/open/v2/create_video_from_avatar' \
+  -H 'x-api-key: YOUR_API_KEY' \
+  -d '{
+    "avatar_id": 127,
+    "audio_source": "aud_abc123",
+    "aspect_ratio": 0,
+    "screen_style": 0
+  }'
+```
+  </Step>
+  
+  <Step title="Get Result">
+Retrieve video via webhook or polling (2-5 minutes).
+  </Step>
+</Steps>
+
+## Advanced Options
+
+### With Custom Background
+
+```bash
+curl -X POST 'https://api.jogg.ai/open/v2/create_video_from_avatar' \
+  -H 'x-api-key: YOUR_API_KEY' \
+  -d '{
+    "avatar_id": 127,
+    "audio_source": "aud_abc123",
+    "aspect_ratio": 0,
+    "screen_style": 0,
+    "background_image": "img_custom",
+    "background_music": "aud_bg_music"
+  }'
+```
+
+<Info>
+  You can add background music in addition to the voice audio. The voice audio will be mixed with the background music.
+</Info>
+
+### With Photo Avatar
+
+```bash
+curl -X POST 'https://api.jogg.ai/open/v2/create_video_from_avatar' \
+  -H 'x-api-key: YOUR_API_KEY' \
+  -d '{
+    "avatar_id": "photo_123",
+    "avatar_type": "photo_avatar",
+    "audio_source": "aud_abc123",
+    "aspect_ratio": 1,
+    "screen_style": 0
+  }'
+```
+
+## Best Practices
+
+**Audio Quality**
+- Record in a quiet environment
+- Use a good microphone if possible
+- Avoid background noise and echo
+- Normalize audio levels before uploading
+- Test playback before uploading
+
+**Timing & Pacing**
+- Speak clearly and at a moderate pace
+- Add pauses where needed
+- Keep audio duration reasonable (under 5 minutes)
+- Match audio length to video needs
+
+**File Optimization**
+- Compress audio files to reduce upload time
+- Use MP3 format for best compatibility
+- Target 192 kbps bitrate for good quality
+- Remove silence at start and end
+
+<Tip>
+  Use audio editing software (Audacity, Adobe Audition) to clean up your audio before uploading for best results.
+</Tip>
+
+## Common Issues
+
+<AccordionGroup>
+  <Accordion title="Audio Not Syncing with Avatar">
+    **Problem**: Avatar lip-sync looks off  
+    **Solution**: Ensure clean audio without background noise. The avatar syncs to the voice frequency.
+  </Accordion>
+  
+  <Accordion title="Audio Quality Poor in Video">
+    **Problem**: Audio sounds distorted or compressed  
+    **Solution**: Upload higher bitrate audio (at least 192 kbps). Avoid over-compressed files.
+  </Accordion>
+  
+  <Accordion title="File Upload Failed">
+    **Error**: File size too large  
+    **Solution**: Compress audio or split into multiple segments. Max size is 20MB.
+  </Accordion>
+  
+  <Accordion title="Cannot Use Script with Audio Source">
+    **Error**: Invalid parameters  
+    **Solution**: Remove `script` and `voice_id` when using `audio_source`. They're mutually exclusive.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Upload Media"
+    icon="upload"
+    href="/api-reference/workflows/upload-media/upload-media-audio"
+  >
+    Learn more about uploading audio files
+  </Card>
+  
+  <Card
+    title="Use Photo Avatar"
+    icon="camera"
+    href="/api-reference/workflows/avatar-videos/avatar-videos-with-photo-avatar"
+  >
+    Combine custom audio with photo avatars
+  </Card>
+  
+  <Card
+    title="Avatar Videos Overview"
+    icon="arrow-left"
+    href="/api-reference/workflows/avatar-videos/avatar-videos-overview"
+  >
+    Back to avatar videos overview
+  </Card>
+</CardGroup>
+
+## Need Help?
+
+For questions about using custom audio, contact us at [support@jogg.ai](mailto:support@jogg.ai)
+

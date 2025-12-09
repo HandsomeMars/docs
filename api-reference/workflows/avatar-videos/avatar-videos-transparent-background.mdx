@@ -1,0 +1,380 @@
+---
+title: "Create Avatar Videos with Transparent Background"
+description: "Generate avatar videos with transparent backgrounds for easy compositing"
+---
+
+## Introduction
+
+Create avatar videos with transparent backgrounds (alpha channel) that can be easily composited over other content. Perfect for overlaying avatars on presentations, websites, or other videos.
+
+<CardGroup cols={2}>
+  <Card title="Easy Compositing" icon="layer-group">
+    Layer over any background or video
+  </Card>
+  <Card title="Flexible Use" icon="wand-magic-sparkles">
+    Use in video editors or web applications
+  </Card>
+  <Card title="Professional Quality" icon="star">
+    Clean edges and smooth alpha channel
+  </Card>
+  <Card title="Multiple Formats" icon="file-video">
+    MOV with alpha or WebM
+  </Card>
+</CardGroup>
+
+## Use Cases
+
+✅ **Perfect for**:
+- Overlaying avatars on presentations
+- Adding avatars to existing videos
+- Website video backgrounds
+- Green screen replacements
+- Video editing projects
+- AR/VR applications
+
+## Quick Start
+
+### Create Transparent Background Video
+
+```bash
+curl --request POST \
+  --url 'https://api.jogg.ai/open/v2/create_video_from_avatar' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "script": "Welcome! This avatar has a transparent background.",
+    "avatar_id": 127,
+    "voice_id": "en-US-ChristopherNeural",
+    "aspect_ratio": 0,
+    "screen_style": 0,
+    "transparent_background": true,
+    "output_format": "mov"
+  }'
+```
+
+<Check>
+  Set `transparent_background: true` and `output_format: "mov"` for alpha channel support
+</Check>
+
+**Response:**
+
+```json
+{
+  "code": 0,
+  "msg": "success",
+  "data": {
+    "project_id": "vid_abc123"
+  }
+}
+```
+
+### Retrieve the Transparent Video
+
+```bash
+curl --request GET \
+  --url 'https://api.jogg.ai/open/v2/avatar_video/vid_abc123' \
+  --header 'x-api-key: YOUR_API_KEY'
+```
+
+**Response:**
+
+```json
+{
+  "code": 0,
+  "data": {
+    "project_id": "vid_abc123",
+    "status": "completed",
+    "video_url": "https://res.jogg.ai/videos/vid_abc123.mov",
+    "duration": 15,
+    "has_alpha": true
+  }
+}
+```
+
+## Key Parameters
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `transparent_background` | `true` | Enable transparent background |
+| `output_format` | `"mov"` or `"webm"` | Video format (MOV recommended for alpha) |
+| `screen_style` | `0` | Must use full avatar style |
+
+<Warning>
+  Transparent background only works with `screen_style: 0` (full avatar). Styles 1 and 2 include background elements.
+</Warning>
+
+## Output Formats
+
+### MOV with ProRes 4444
+
+<CardGroup cols={2}>
+  <Card title="Highest Quality" icon="star">
+    ProRes 4444 codec with alpha channel
+  </Card>
+  <Card title="Large File Size" icon="triangle-exclamation">
+    ~100-500MB per minute of video
+  </Card>
+  <Card title="Best Compatibility" icon="check">
+    Works in all professional video editors
+  </Card>
+  <Card title="Recommended" icon="thumbs-up">
+    Best choice for post-production
+  </Card>
+</CardGroup>
+
+```json
+{
+  "transparent_background": true,
+  "output_format": "mov"
+}
+```
+
+### WebM with VP9
+
+<CardGroup cols={2}>
+  <Card title="Smaller Size" icon="compress">
+    10-50MB per minute of video
+  </Card>
+  <Card title="Web Optimized" icon="globe">
+    Perfect for web applications
+  </Card>
+  <Card title="Browser Support" icon="browsers">
+    Supported by modern browsers
+  </Card>
+  <Card title="Good Quality" icon="check">
+    Good balance of size and quality
+  </Card>
+</CardGroup>
+
+```json
+{
+  "transparent_background": true,
+  "output_format": "webm"
+}
+```
+
+## Complete Example
+
+<Steps>
+  <Step title="Create Transparent Video">
+```bash
+curl -X POST 'https://api.jogg.ai/open/v2/create_video_from_avatar' \
+  -H 'x-api-key: YOUR_API_KEY' \
+  -d '{
+    "script": "Learn how to use our product in just 3 simple steps.",
+    "avatar_id": 127,
+    "voice_id": "en-US-JennyNeural",
+    "aspect_ratio": 0,
+    "screen_style": 0,
+    "transparent_background": true,
+    "output_format": "mov",
+    "caption": false
+  }'
+```
+  </Step>
+  
+  <Step title="Wait for Processing">
+Videos with transparent backgrounds take slightly longer (3-7 minutes).
+  </Step>
+  
+  <Step title="Download Video">
+```bash
+curl -X GET 'https://api.jogg.ai/open/v2/avatar_video/vid_abc123' \
+  -H 'x-api-key: YOUR_API_KEY'
+```
+
+Download the MOV file with alpha channel.
+  </Step>
+  
+  <Step title="Use in Your Project">
+Import the MOV file into your video editor or web application. The transparent background will be preserved.
+  </Step>
+</Steps>
+
+## Using Transparent Videos
+
+### In Video Editors (After Effects, Premiere, Final Cut)
+
+1. Import the MOV file
+2. The alpha channel is automatically recognized
+3. Place it over your background footage
+4. Adjust position, scale, and timing as needed
+
+### On Websites (HTML5 Video)
+
+```html
+<video autoplay loop muted playsinline>
+  <source src="avatar_transparent.webm" type="video/webm">
+  <source src="avatar_transparent.mov" type="video/quicktime">
+</video>
+
+<style>
+video {
+  position: absolute;
+  width: 400px;
+  height: auto;
+  z-index: 10;
+}
+</style>
+```
+
+### In JavaScript/Canvas
+
+```javascript
+const video = document.createElement('video');
+video.src = 'avatar_transparent.webm';
+
+const canvas = document.getElementById('myCanvas');
+const ctx = canvas.getContext('2d');
+
+video.addEventListener('play', function() {
+  function draw() {
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    requestAnimationFrame(draw);
+  }
+  draw();
+});
+```
+
+## Best Practices
+
+**Format Selection**
+- Use MOV for video editing and post-production
+- Use WebM for web applications and browsers
+- Consider file size for your use case
+- Test playback on target platform
+
+**Avatar Selection**
+- Choose avatars with clear edges
+- Avoid avatars with complex hair (may have edge artifacts)
+- Test different avatars for best results
+
+**Technical Tips**
+- Disable captions (`caption: false`) for clean overlay
+- Use appropriate aspect ratios for your target
+- Consider video duration vs. file size
+- Cache videos for repeated use
+
+**Post-Processing**
+- You can further edit the transparent video
+- Add effects, filters, or color correction
+- Combine with other video elements
+- Export in your desired final format
+
+<Tip>
+  For web use, provide both WebM and MOV formats as fallbacks for maximum browser compatibility.
+</Tip>
+
+## Limitations
+
+<AccordionGroup>
+  <Accordion title="Screen Style Restrictions">
+Only `screen_style: 0` (full avatar) supports transparent backgrounds.
+
+Styles 1 and 2 include background elements that cannot be made transparent.
+  </Accordion>
+  
+  <Accordion title="Larger File Sizes">
+Transparent videos are larger than standard videos:
+- MOV: 5-10x larger than MP4
+- WebM: 2-3x larger than MP4
+
+Plan for longer download/upload times.
+  </Accordion>
+  
+  <Accordion title="Processing Time">
+Transparent videos take longer to process:
+- Standard: 2-5 minutes
+- Transparent: 3-7 minutes
+
+Be patient and use webhooks for notifications.
+  </Accordion>
+  
+  <Accordion title="Browser Compatibility">
+**WebM with alpha**: Supported in Chrome, Edge, and Firefox. Not supported in Safari (use MOV instead).
+
+**MOV with alpha**: Supported in Safari and most video players. Limited browser support for direct playback.
+
+  </Accordion>
+</AccordionGroup>
+
+## Common Issues
+
+<AccordionGroup>
+  <Accordion title="Background Not Transparent">
+    **Problem**: Video has black or white background  
+    **Solution**: Ensure `transparent_background: true` and `output_format: "mov"` are set
+  </Accordion>
+  
+  <Accordion title="File Too Large">
+    **Problem**: MOV file is hundreds of MB  
+    **Solution**: Use WebM format for smaller size, or compress the video post-processing
+  </Accordion>
+  
+  <Accordion title="Edge Artifacts">
+    **Problem**: Jagged or pixelated edges around avatar  
+    **Solution**: Try different avatars, or use anti-aliasing in post-processing
+  </Accordion>
+  
+  <Accordion title="Browser Won't Play">
+    **Problem**: Transparent video doesn't play in browser  
+    **Solution**: Use WebM for browsers, MOV for video editors. Provide both formats.
+  </Accordion>
+</AccordionGroup>
+
+## Technical Specifications
+
+### MOV with ProRes 4444
+
+```
+Codec: Apple ProRes 4444
+Alpha Channel: Yes
+Color Depth: 12-bit
+File Size: ~200-500 MB/min
+Quality: Highest
+Use Case: Professional editing
+```
+
+### WebM with VP9
+
+```
+Codec: VP9
+Alpha Channel: Yes
+Color Depth: 8-bit
+File Size: ~20-50 MB/min
+Quality: Good
+Use Case: Web applications
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Upload Media"
+    icon="upload"
+    href="/api-reference/workflows/upload-media/upload-media-overview"
+  >
+    Upload custom backgrounds to composite
+  </Card>
+  
+  <Card
+    title="Use Photo Avatar"
+    icon="camera"
+    href="/api-reference/workflows/avatar-videos/avatar-videos-with-photo-avatar"
+  >
+    Create transparent videos with photo avatars
+  </Card>
+  
+  <Card
+    title="Avatar Videos Overview"
+    icon="arrow-left"
+    href="/api-reference/workflows/avatar-videos/avatar-videos-overview"
+  >
+    Back to avatar videos overview
+  </Card>
+</CardGroup>
+
+## Need Help?
+
+For questions about transparent background videos, contact us at [support@jogg.ai](mailto:support@jogg.ai)
+

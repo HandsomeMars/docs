@@ -1,0 +1,377 @@
+---
+title: "Error Handling"
+description: "Understanding and handling API errors effectively"
+---
+
+## Response Structure
+
+All API responses follow a consistent structure with a `code` field indicating success or failure:
+
+```json
+{
+  "code": 0,
+  "msg": "Success",
+  "data": {...}
+}
+```
+
+- `code: 0` indicates success
+- `code > 0` indicates an error
+
+## Error Response Format
+
+When an error occurs, the response will look like this:
+
+```json
+{
+  "code": 10105,
+  "msg": "Invalid API key",
+  "data": null
+}
+```
+
+## Error Code Categories
+
+<CardGroup cols={2}>
+  <Card title="Authentication (101xx)" icon="key">
+    Errors related to API authentication
+  </Card>
+  <Card title="Request Format (102xx)" icon="file-code">
+    Invalid request format or parameters
+  </Card>
+  <Card title="Resources (103xx)" icon="database">
+    Resource not found or limit exceeded
+  </Card>
+  <Card title="Rate Limiting (104xx)" icon="gauge">
+    Rate limit or quota exceeded
+  </Card>
+  <Card title="Credits (105xx)" icon="coins">
+    Insufficient credits or limits
+  </Card>
+  <Card title="Server Errors (106xx)" icon="server">
+    Internal server errors
+  </Card>
+</CardGroup>
+
+## Common Error Codes
+
+### Authentication Errors (101xx)
+
+<AccordionGroup>
+  <Accordion title="10104 - API Key Required">
+    **Message:** API key is required
+    
+    **Cause:** No `x-api-key` header provided
+    
+    **Solution:**
+    ```bash
+    curl -X GET 'https://api.jogg.ai/open/v2/user/whoami' \
+      -H 'x-api-key: YOUR_API_KEY'
+    ```
+  </Accordion>
+  
+  <Accordion title="10105 - Invalid API Key">
+    **Message:** Invalid API key
+    
+    **Cause:** The provided API key is incorrect or malformed
+    
+    **Solution:**
+    - Verify your API key in the [Dashboard](https://dashboard.jogg.ai)
+    - Copy the API key again to avoid copy-paste errors
+    - Check for extra spaces or hidden characters
+  </Accordion>
+  
+  <Accordion title="10106 - Expired API Key">
+    **Message:** API key has expired
+    
+    **Cause:** Your API key has been revoked or expired
+    
+    **Solution:**
+    - Generate a new API key in the [Dashboard](https://dashboard.jogg.ai)
+    - Update your application with the new key
+  </Accordion>
+  
+  <Accordion title="10107 - Unauthorized Access">
+    **Message:** You don't have permission to access this resource
+    
+    **Cause:** Your account lacks the necessary permissions
+    
+    **Solution:**
+    - Verify your subscription plan supports this feature
+    - Contact support for permission issues
+  </Accordion>
+</AccordionGroup>
+
+### Request Errors (102xx)
+
+<AccordionGroup>
+  <Accordion title="10201 - Invalid Request Format">
+    **Message:** Invalid request format
+    
+    **Cause:** Malformed JSON or incorrect Content-Type
+    
+    **Solution:**
+    ```bash
+    curl -X POST 'https://api.jogg.ai/open/v2/product' \
+      -H 'x-api-key: YOUR_API_KEY' \
+      -H 'Content-Type: application/json' \
+      -d '{"name": "Product Name"}'
+    ```
+  </Accordion>
+  
+  <Accordion title="10202 - Missing Required Parameter">
+    **Message:** Missing required parameter: {parameter_name}
+    
+    **Cause:** A required field is not provided
+    
+    **Solution:**
+    - Check the API documentation for required fields
+    - Ensure all required parameters are included in your request
+  </Accordion>
+  
+  <Accordion title="10203 - Invalid Parameter Value">
+    **Message:** Invalid value for parameter: {parameter_name}
+    
+    **Cause:** Parameter value doesn't meet validation requirements
+    
+    **Solution:**
+    - Verify parameter type (string, number, boolean, etc.)
+    - Check value constraints (min/max length, allowed values, etc.)
+  </Accordion>
+</AccordionGroup>
+
+### Resource Errors (103xx)
+
+<AccordionGroup>
+  <Accordion title="10301 - Resource Not Found">
+    **Message:** Resource not found
+    
+    **Cause:** The requested resource ID doesn't exist
+    
+    **Solution:**
+    - Verify the resource ID is correct
+    - Check if the resource was deleted
+    - Ensure you're using the correct endpoint
+  </Accordion>
+  
+  <Accordion title="10302 - Resource Already Exists">
+    **Message:** Resource already exists
+    
+    **Cause:** Attempting to create a duplicate resource
+    
+    **Solution:**
+    - Use a different identifier
+    - Update the existing resource instead of creating a new one
+  </Accordion>
+  
+  <Accordion title="10303 - Resource Limit Exceeded">
+    **Message:** Resource limit exceeded
+    
+    **Cause:** You've reached the maximum number of allowed resources
+    
+    **Solution:**
+    - Delete unused resources
+    - Upgrade your plan for higher limits
+  </Accordion>
+</AccordionGroup>
+
+### Rate Limit Errors (104xx)
+
+<AccordionGroup>
+  <Accordion title="10401 - Rate Limit Exceeded">
+    **Message:** Rate limit exceeded. Please try again later.
+    
+    **Cause:** Too many requests in a short time period
+    
+    **Solution:**
+    Implement exponential backoff:
+    
+    ```bash
+    retry_count=0
+    max_retries=3
+    
+    while [ $retry_count -lt $max_retries ]; do
+      response=$(curl -s -w "%{http_code}" -X GET 'https://api.jogg.ai/open/v2/user/whoami' \
+        -H 'x-api-key: YOUR_API_KEY')
+      
+      if [ "${response: -3}" = "429" ]; then
+        wait_time=$((2 ** retry_count))
+        echo "Rate limited. Waiting ${wait_time} seconds..."
+        sleep $wait_time
+        retry_count=$((retry_count + 1))
+      else
+        break
+      fi
+    done
+    ```
+  </Accordion>
+  
+  <Accordion title="10402 - Too Many Concurrent Requests">
+    **Message:** Too many concurrent requests
+    
+    **Cause:** Exceeded the limit for simultaneous requests
+    
+    **Solution:**
+    - Reduce concurrent request count
+    - Implement request queuing
+    - Use webhooks instead of polling
+  </Accordion>
+</AccordionGroup>
+
+### Credit Errors (105xx)
+
+<AccordionGroup>
+  <Accordion title="10501 - Insufficient Credits">
+    **Message:** Insufficient credits to complete this operation
+    
+    **Cause:** Your account doesn't have enough credits
+    
+    **Solution:**
+    - Purchase additional credits in the [Dashboard](https://dashboard.jogg.ai)
+    - Check your current balance: `GET /user/whoami`
+  </Accordion>
+  
+  <Accordion title="10502 - Credit Limit Exceeded">
+    **Message:** Monthly credit limit exceeded
+    
+    **Cause:** You've used all your monthly credits
+    
+    **Solution:**
+    - Wait for the next billing cycle
+    - Upgrade your plan for more credits
+  </Accordion>
+</AccordionGroup>
+
+### Server Errors (106xx)
+
+<AccordionGroup>
+  <Accordion title="10601 - Internal Server Error">
+    **Message:** Internal server error
+    
+    **Cause:** Unexpected error on the server side
+    
+    **Solution:**
+    - Retry the request after a short delay
+    - If the error persists, contact support with the request ID
+  </Accordion>
+  
+  <Accordion title="10602 - Service Temporarily Unavailable">
+    **Message:** Service temporarily unavailable
+    
+    **Cause:** The service is under maintenance or experiencing issues
+    
+    **Solution:**
+    - Check [status page](https://status.jogg.ai) for updates
+    - Retry after a few minutes
+  </Accordion>
+</AccordionGroup>
+
+## Error Handling Best Practices
+
+### 1. Always Check Response Codes
+
+```bash
+response=$(curl -s -X GET 'https://api.jogg.ai/open/v2/user/whoami' \
+  -H 'x-api-key: YOUR_API_KEY')
+
+code=$(echo $response | grep -o '"code":[0-9]*' | cut -d':' -f2)
+
+if [ "$code" -eq 0 ]; then
+  echo "Success"
+else
+  msg=$(echo $response | grep -o '"msg":"[^"]*"' | cut -d'"' -f4)
+  echo "Error $code: $msg"
+fi
+```
+
+### 2. Implement Retry Logic
+
+```bash
+max_retries=3
+retry_count=0
+success=false
+
+while [ $retry_count -lt $max_retries ] && [ "$success" = false ]; do
+  response=$(curl -s -X GET 'https://api.jogg.ai/open/v2/user/whoami' \
+    -H 'x-api-key: YOUR_API_KEY')
+  
+  code=$(echo $response | grep -o '"code":[0-9]*' | cut -d':' -f2)
+  
+  if [ "$code" -eq 0 ]; then
+    success=true
+    echo "Success!"
+  else
+    retry_count=$((retry_count + 1))
+    if [ $retry_count -lt $max_retries ]; then
+      wait_time=$((2 ** retry_count))
+      echo "Retry $retry_count/$max_retries after ${wait_time}s..."
+      sleep $wait_time
+    fi
+  fi
+done
+```
+
+### 3. Log Errors for Debugging
+
+```bash
+log_error() {
+  local code=$1
+  local msg=$2
+  local timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+  echo "[$timestamp] ERROR $code: $msg" >> /var/log/joggai_errors.log
+}
+
+response=$(curl -s -X GET 'https://api.jogg.ai/open/v2/user/whoami' \
+  -H 'x-api-key: YOUR_API_KEY')
+
+code=$(echo $response | grep -o '"code":[0-9]*' | cut -d':' -f2)
+
+if [ "$code" -ne 0 ]; then
+  msg=$(echo $response | grep -o '"msg":"[^"]*"' | cut -d'"' -f4)
+  log_error "$code" "$msg"
+fi
+```
+
+### 4. Display User-Friendly Messages
+
+Map error codes to user-friendly messages:
+
+```bash
+get_user_message() {
+  case $1 in
+    10105) echo "Your API key is invalid. Please check your settings." ;;
+    10501) echo "You don't have enough credits. Please purchase more." ;;
+    10401) echo "Too many requests. Please wait a moment and try again." ;;
+    *) echo "An unexpected error occurred. Please try again later." ;;
+  esac
+}
+```
+
+## Quick Reference Table
+
+| Code Range | Category | Common Causes |
+|------------|----------|---------------|
+| 0 | Success | Request completed successfully |
+| 101xx | Authentication | Invalid or missing API key |
+| 102xx | Request Format | Invalid parameters or JSON |
+| 103xx | Resources | Resource not found or limits |
+| 104xx | Rate Limiting | Too many requests |
+| 105xx | Credits | Insufficient credits |
+| 106xx | Server Errors | Internal server issues |
+
+## Getting Help
+
+If you encounter an error that's not documented here:
+
+1. Check the error message for specific details
+2. Review your request payload and headers
+3. Consult the [API Reference](/api-reference/openapi-v2)
+4. Contact support at [support@jogg.ai](mailto:support@jogg.ai) with:
+   - Error code and message
+   - Request ID (if provided)
+   - Timestamp of the error
+   - The API endpoint you were calling
+
+<Note>
+  Include your user ID (but not your API key) when contacting support.
+</Note>
