@@ -1,0 +1,27 @@
+---
+title: "Upload Asset"
+openapi: "POST /open/v2/upload/asset"
+---
+
+Upload custom images, videos, or audio files to use in your video projects.
+
+## Example Usage
+
+```bash
+curl --request POST \
+  --url 'https://api.jogg.ai/open/v2/upload/asset' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'Content-Type: multipart/form-data' \
+  --form 'file=@/path/to/your/image.jpg' \
+  --form 'asset_type=image' \
+  --form 'name=Product Photo'
+```
+
+## Related Guides
+
+<CardGroup cols={2}>
+  <Card title="Upload Media Guide" href="/api-reference/v2/API Documentation/UploadMedia">
+    Learn about media uploads
+  </Card>
+</CardGroup>
+

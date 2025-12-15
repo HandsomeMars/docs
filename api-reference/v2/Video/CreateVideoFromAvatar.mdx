@@ -1,0 +1,34 @@
+---
+title: "Create Video from Avatar"
+openapi: "POST /open/v2/create_video_from_avatar"
+---
+
+Create a talking avatar video by providing a script, avatar ID, and voice ID. This endpoint generates videos with AI avatars speaking your provided text.
+
+## Example Usage
+
+```bash
+curl --request POST \
+  --url 'https://api.jogg.ai/open/v2/create_video_from_avatar' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "script": "Welcome to JoggAI! Create amazing avatar videos with our API.",
+    "avatar_id": 127,
+    "voice_id": "en-US-ChristopherNeural",
+    "aspect_ratio": 0,
+    "screen_style": 0
+  }'
+```
+
+## Related Guides
+
+<CardGroup cols={2}>
+  <Card title="Create Avatar Videos Guide" href="/api-reference/v2/API Documentation/CreateAvatarVideos">
+    Learn how to create avatar videos step-by-step
+  </Card>
+  <Card title="Get Video Status" href="/api-reference/v2/Video/GetAvatarVideo">
+    Check the status of your video generation
+  </Card>
+</CardGroup>
+

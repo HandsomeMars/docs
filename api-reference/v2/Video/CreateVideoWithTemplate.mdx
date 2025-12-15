@@ -1,0 +1,30 @@
+---
+title: "Create Video with Template"
+openapi: "POST /open/v2/create_video_with_template"
+---
+
+Create a video using a pre-designed template. Templates provide consistent branding and faster video creation.
+
+## Example Usage
+
+```bash
+curl -X POST 'https://api.jogg.ai/open/v2/create_video_with_template' \
+  -H 'x-api-key: YOUR_API_KEY' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "template_id": "tmpl_123",
+    "video_name": "Product Showcase",
+    "script": "Check out our amazing product!",
+    "avatar_id": 127,
+    "voice_id": "en-US-ChristopherNeural"
+  }'
+```
+
+## Related Guides
+
+<CardGroup cols={2}>
+  <Card title="Get Templates" href="/api-reference/v2/Template/GetTemplates">
+    Browse available templates
+  </Card>
+</CardGroup>
+

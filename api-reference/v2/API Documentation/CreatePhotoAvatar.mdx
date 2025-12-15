@@ -1,0 +1,444 @@
+---
+title: "Create Photo Avatar"
+description: "Generate custom AI avatars from portrait photos"
+---
+
+## Introduction
+
+Transform portrait photos into talking AI avatars that can speak any script in 40+ languages. Create personalized avatars for branding, marketing, or custom content production.
+
+<CardGroup cols={2}>
+  <Card title="Personal Branding" icon="user-tie">
+    Your face, your voice, your brand
+  </Card>
+  <Card title="Multilingual" icon="globe">
+    One photo avatar speaks 40+ languages
+  </Card>
+  <Card title="Realistic Motion" icon="video">
+    Natural facial expressions and movements
+  </Card>
+  <Card title="Fast Generation" icon="bolt">
+    2-5 minutes to create custom avatar
+  </Card>
+</CardGroup>
+
+---
+
+## Workflow Overview
+
+Photo avatar creation is a **2-step asynchronous process**:
+
+<Steps>
+<Step title="Generate Avatar">
+  Upload portrait photo → AI generates avatar (2-5 min)
+</Step>
+
+<Step title="Use in Videos">
+  Create videos using your custom avatar
+</Step>
+</Steps>
+
+<Info>
+**Optional:** Add motion for enhanced realism (additional 2-3 minutes)
+</Info>
+
+---
+
+## Quick Start
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/open/v2/photo_avatar/photo/generate` | Generate photo avatar |
+| GET | `/open/v2/photo_avatar/photo` | List your photo avatars |
+| GET | `/open/v2/photo_avatar/photo/{id}` | Get specific avatar status |
+| POST | `/open/v2/photo_avatar/add_motion` | Add motion to avatar |
+
+---
+
+### Step 1: Generate Photo Avatar
+
+Upload a portrait photo to create an avatar:
+
+```bash
+curl --request POST \
+  --url 'https://api.jogg.ai/open/v2/photo_avatar/photo/generate' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "photo_url": "https://example.com/portrait.jpg",
+    "name": "John Doe Avatar"
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "code": 0,
+  "msg": "Success",
+  "data": {
+    "task_id": "task_abc123",
+    "status": "processing",
+    "estimated_time": 180
+  }
+}
+```
+
+<Warning>
+Avatar generation takes 2-5 minutes. Save the `task_id` to check status.
+</Warning>
+
+---
+
+### Step 2: Check Generation Status
+
+```bash
+curl --request GET \
+  --url 'https://api.jogg.ai/open/v2/photo_avatar/photo' \
+  --header 'x-api-key: YOUR_API_KEY'
+```
+
+**Response (Completed):**
+
+```json
+{
+  "code": 0,
+  "msg": "Success",
+  "data": {
+    "avatars": [
+      {
+        "avatar_id": 123,
+        "name": "John Doe Avatar",
+        "cover_url": "https://res.jogg.ai/avatars/cover_123.jpg",
+        "status": "completed",
+        "created_at": 1732806631
+      }
+    ]
+  }
+}
+```
+
+<Check>
+Save the `avatar_id` to use in video creation!
+</Check>
+
+---
+
+### Step 3: Use in Video Creation
+
+Create a video with your photo avatar:
+
+```bash
+curl --request POST \
+  --url 'https://api.jogg.ai/open/v2/create_video_from_avatar' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "avatar_id": 123,
+    "avatar_type": 1,
+    "script": "Hello! I am your custom photo avatar.",
+    "voice_id": "en-US-ChristopherNeural",
+    "aspect_ratio": "portrait",
+    "caption": true
+  }'
+```
+
+<Info>
+Set `avatar_type: 1` for custom avatars (photo avatars)
+</Info>
+
+---
+
+## Code Examples
+
+### Add Motion to Avatar
+
+Enhance avatar with realistic movements:
+
+```bash
+curl --request POST \
+  --url 'https://api.jogg.ai/open/v2/photo_avatar/add_motion' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "avatar_id": 123,
+    "motion_type": "natural"
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "code": 0,
+  "msg": "Success",
+  "data": {
+    "task_id": "motion_xyz789",
+    "status": "processing",
+    "estimated_time": 150
+  }
+}
+```
+
+**Check Motion Status:**
+
+```bash
+curl --request GET \
+  --url 'https://api.jogg.ai/open/v2/photo_avatar/add_motion?task_id=motion_xyz789' \
+  --header 'x-api-key: YOUR_API_KEY'
+```
+
+---
+
+## Photo Requirements
+
+### Image Specifications
+
+| Requirement | Specification |
+|-------------|---------------|
+| **Format** | JPG, PNG, WebP |
+| **File Size** | Maximum 10MB |
+| **Resolution** | Min: 512x512px, Recommended: 1024x1024px |
+| **Aspect Ratio** | Square or portrait |
+| **Face** | Clear, frontal, well-lit, unobstructed |
+
+---
+
+### Photo Quality Guidelines
+
+<AccordionGroup>
+  <Accordion title="✅ Good Photos">
+    **What works best:**
+    
+    - Face directly facing camera (frontal view)
+    - Even, soft lighting (no harsh shadows)
+    - Clear facial features (high resolution)
+    - Neutral or slight smile expression
+    - Plain, solid-color background
+    - Natural makeup and appearance
+    - No glasses (or non-reflective if needed)
+    - Hair not covering face
+  </Accordion>
+  
+  <Accordion title="❌ Avoid These">
+    **What doesn't work:**
+    
+    - Side profile or angled face
+    - Poor lighting or harsh shadows
+    - Blurry or low-resolution images
+    - Face obstructed (hands, objects, masks)
+    - Busy or cluttered backgrounds
+    - Sunglasses or reflective glasses
+    - Hats or head coverings
+    - Extreme expressions (laughing, frowning)
+    - Heavy filters or editing
+  </Accordion>
+  
+  <Accordion title="Lighting Tips">
+    **Best lighting setup:**
+    
+    - Natural outdoor light (overcast day is ideal)
+    - Soft indoor lighting (no overhead harsh lights)
+    - Face evenly lit (no one-sided shadows)
+    - Avoid backlit photos (light behind subject)
+    - Use diffused light when possible
+    - Golden hour for outdoor photos
+  </Accordion>
+  
+  <Accordion title="Background Recommendations">
+    **Background best practices:**
+    
+    - Plain, solid color works best
+    - White, gray, or neutral tones
+    - Good contrast with subject
+    - No distracting elements
+    - Avoid patterns or textures
+    - Professional backdrop preferred
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Use Case Examples
+
+### Personal Branding
+
+Create your digital spokesperson:
+
+- **Social Media**: Personalized video messages at scale
+- **Email Marketing**: Custom video intros
+- **Online Courses**: Instructor presence without recording
+- **Thought Leadership**: Consistent personal brand across content
+
+---
+
+### Company Spokesperson
+
+Feature executives or team members:
+
+- **Announcements**: CEO messages in multiple languages
+- **Product Demos**: Consistent company voice
+- **Training Videos**: Scale expert knowledge
+- **Customer Support**: Personalized video responses
+
+---
+
+### Multilingual Content
+
+One photo, many languages:
+
+- Create avatar once from photo
+- Generate videos in 40+ languages
+- Maintain same face across all markets
+- No need for multiple recordings
+
+---
+
+## Avatar Type Reference
+
+When using avatars in videos, specify the `avatar_type` parameter:
+
+| Type | Value | Description | Use Case |
+|------|-------|-------------|----------|
+| **Public Avatar** | `0` | Pre-made library avatars | Quick, generic content |
+| **Custom Avatar** | `1` | Photo avatars | Personal/branded content |
+
+<Tip>
+Always use `avatar_type: 1` when creating videos with photo avatars
+</Tip>
+
+---
+
+## Best Practices
+
+### Photo Preparation
+
+<Tip>
+**Professional Headshots Work Best:**
+- Studio or natural outdoor lighting
+- Professional camera or high-end smartphone
+- Sharp focus, no blur
+- No filters or heavy editing
+- Natural skin tones
+</Tip>
+
+### Testing Strategy
+
+Before bulk production:
+1. Test with one photo first
+2. Generate video with short script
+3. Verify avatar quality and movements
+4. Test different voices and languages
+5. Adjust source photo if needed
+
+### Organization
+
+Keep track of your avatars:
+- Use descriptive names
+- Document `avatar_id` values
+- Note which photos work best
+- Maintain source photo library
+- Track motion settings used
+
+---
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Photo quality too low">
+    **Error:** `Photo quality insufficient`
+    
+    **Solutions:**
+    - Use minimum 512x512px resolution (1024x1024px recommended)
+    - Ensure image is sharp, not blurry
+    - Use well-lit photo
+    - Avoid heavily compressed images
+    - Try professional headshot
+  </Accordion>
+  
+  <Accordion title="Face not detected">
+    **Error:** `No face detected in photo`
+    
+    **Solutions:**
+    - Ensure face is clearly visible and frontal
+    - Remove obstructions (hands, masks, hair)
+    - Face should not be profile or angled
+    - Check lighting and contrast
+    - Ensure face occupies enough of frame
+  </Accordion>
+  
+  <Accordion title="Generation failed">
+    **Error:** `Avatar generation failed`
+    
+    **Solutions:**
+    - Try a different photo
+    - Verify photo meets all requirements
+    - Ensure photo URL is publicly accessible
+    - Check file format is supported (JPG/PNG/WebP)
+    - Verify file size is under 10MB
+    - Retry the generation
+  </Accordion>
+  
+  <Accordion title="Avatar looks unnatural">
+    **Issue:** Generated avatar doesn't look realistic
+    
+    **Solutions:**
+    - Use higher quality source photo
+    - Ensure proper, even lighting
+    - Use photo with neutral expression
+    - Plain background helps AI focus on face
+    - Consider professional headshot
+    - Test with different photos
+  </Accordion>
+  
+  <Accordion title="Motion not working">
+    **Issue:** Motion generation fails or looks wrong
+    
+    **Solutions:**
+    - Ensure base avatar generation completed first
+    - Check avatar status is "completed"
+    - Verify avatar quality is good
+    - Try different `motion_type`
+    - Re-generate avatar with better photo
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Related Documentation
+
+<CardGroup cols={2}>
+  <Card
+    title="Avatar Videos with Photo Avatar"
+    icon="video"
+    href="/api-reference/v2/API Documentation/AvatarVideosWithPhotoAvatar"
+  >
+    Using photo avatars in videos
+  </Card>
+  
+  <Card
+    title="Create Avatar Videos"
+    icon="user"
+    href="/api-reference/v2/API Documentation/CreateAvatarVideos"
+  >
+    Main avatar video guide
+  </Card>
+  
+  <Card
+    title="Upload Media"
+    icon="upload"
+    href="/api-reference/v2/API Documentation/UploadMedia"
+  >
+    How to upload photos and media
+  </Card>
+  
+  <Card
+    title="Generate Photo Avatar API"
+    icon="camera"
+    href="/api-reference/v2/Avatar/GeneratePhotoAvatar"
+  >
+    Complete API reference
+  </Card>
+</CardGroup>

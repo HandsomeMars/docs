@@ -1,0 +1,2706 @@
+openapi: 3.0.1
+
+info:
+  title: JoggAI OpenAPI v2
+  description: |
+    JoggAI OpenAPI v2 provides a comprehensive suite of endpoints for creating and managing AI-powered video content.
+    
+    ## Authentication
+    All API requests require authentication using an API key provided in the `x-api-key` header.
+    
+    ## Base URL
+    Production: https://api.jogg.ai/open/v2
+    
+    ## Rate Limiting
+    API calls are subject to rate limiting based on your subscription plan.
+    
+    ## Error Handling
+    All endpoints return standard HTTP status codes along with detailed error messages in the response body.
+    
+  version: 2.0.0
+  license:
+    name: MIT
+
+servers:
+  - url: https://api.jogg.ai
+    description: Production server
+
+security:
+  - apiKeyAuth: []
+
+tags:
+  - name: Video
+    description: Video creation and management operations
+  - name: Avatar
+    description: Avatar management and creation operations
+  - name: Voice
+    description: Voice and timbre management operations
+  - name: Asset
+    description: Asset management including music, scripts, and uploads
+  - name: Template
+    description: Template management operations
+  - name: Product
+    description: Product management operations
+  - name: User
+    description: User account operations
+  - name: Webhook
+    description: Webhook endpoint management for event notifications
+
+paths:
+  /open/v2/ai_scripts:
+    post:
+      tags:
+        - Asset
+      summary: Submit AI script generation request
+      description: |
+        Generate AI-powered video script based on product information and requirements.
+        The script generation is asynchronous - use the returned task_id to check status.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - language
+              properties:
+                product_id:
+                  type: string
+                  description: Product ID from product creation endpoint
+                  example: "NTQ0MTkzNjg"
+                name:
+                  type: string
+                  description: Product name (required if product_id not provided)
+                  example: "Owala FreeSip Insulated Stainless Steel Water Bottle"
+                description:
+                  type: string
+                  description: Product description and selling points
+                  example: "The Owala FreeSip bottle is perfect for active lifestyles..."
+                target_audience:
+                  type: string
+                  description: Target audience for the product
+                  example: "Fitness enthusiasts and outdoor adventurers"
+                video_length:
+                  type: string
+                  description: Desired video length in seconds
+                  enum: ["15", "30", "60"]
+                  example: "30"
+                language:
+                  type: string
+                  description: Script generation language
+                  enum:
+                    - english
+                    - filipino
+                    - french
+                    - german
+                    - hindi
+                    - indonesian
+                    - italian
+                    - japanese
+                    - korean
+                    - malay
+                    - portuguese
+                    - russian
+                    - spanish
+                    - thai
+                    - vietnamese
+                    - arabic
+                    - greek
+                    - turkish
+                    - slovenian
+                    - croatian
+                    - romanian
+                    - chinese
+                    - bengali
+                    - urdu
+                    - hungarian
+                    - traditional-chinese
+                    - polish
+                    - cantonese
+                    - danish
+                    - malayalam
+                    - tamil
+                    - telugu
+                    - czech
+                    - hebrew
+                    - zulu
+                    - swedish
+                    - lithuanian
+                    - dutch
+                    - flemish
+                    - norwegian
+                    - finnish
+                    - bulgarian
+                    - latvian
+                    - ukrainian
+                    - mongolian
+                    - persian
+                    - odia
+                    - assamese
+                    - kannada
+                    - tagalog
+                    - amharic
+                    - serbian
+                    - slovak
+                    - swahili
+                  example: "english"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          task_id:
+                            type: string
+                            description: Task ID to check script generation status
+                            example: "task_123456789"
+
+  /open/v2/ai_scripts/results/{task_id}:
+    get:
+      tags:
+        - Asset
+      summary: Get AI script generation status
+      description: |
+        Check the status and retrieve results of AI script generation task.
+        Scripts are generated in multiple styles for variety.
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          description: Task ID from script generation request
+          schema:
+            type: string
+            example: "task_123456789"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          status:
+                            type: string
+                            description: Task status
+                            enum: [pending, processing, completed, failed]
+                            example: "completed"
+                          scripts:
+                            type: array
+                            description: Generated scripts in different styles
+                            items:
+                              type: object
+                              properties:
+                                script_style:
+                                  type: string
+                                  description: Style of the script
+                                  example: "Storytime"
+                                script_paragraphs:
+                                  type: string
+                                  description: The generated script content
+                                  example: "Ever tried drinking water while running?..."
+
+  /open/v2/avatar_video/{id}:
+    get:
+      tags:
+        - Video
+      summary: Retrieve talking avatar video
+      description: Get video information and status by video ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Video ID from video creation endpoint
+          schema:
+            type: string
+            example: "video_123456"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/VideoDetails'
+
+  /open/v2/avatars/public:
+    get:
+      tags:
+        - Avatar
+      summary: Get Public Avatar List
+      description: |
+        Retrieve list of public avatars with filtering options.
+        Supports pagination and various filters including aspect ratio, style, gender, age, scene, and ethnicity.
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - name: aspect_ratio
+          in: query
+          description: |
+            Filter by aspect ratio:
+            * 0 - Portrait [9:16]
+            * 1 - Landscape [16:9]
+            * 2 - Square [1:1]
+          schema:
+            type: integer
+            enum: [0, 1, 2]
+        - name: style
+          in: query
+          description: Filter by avatar style
+          schema:
+            type: string
+            enum: [professional, social]
+        - name: gender
+          in: query
+          description: Filter by avatar gender
+          schema:
+            type: string
+            enum: [female, male]
+        - name: age
+          in: query
+          description: Filter by age group
+          schema:
+            type: string
+            enum: [adult, senior, young_adult]
+        - name: scene
+          in: query
+          description: Filter by scene type
+          schema:
+            type: string
+            enum: [lifestyle, outdoors, business, studio, health_fitness, education, news]
+        - name: ethnicity
+          in: query
+          description: Filter by ethnicity
+          schema:
+            type: string
+            enum: [european, african, south_asian, east_asian, middle_eastern, south_american, north_american]
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          avatars:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/AvatarInfo'
+                          total:
+                            type: integer
+                            description: Total number of avatars
+                          page:
+                            type: integer
+                            description: Current page number
+                          page_size:
+                            type: integer
+                            description: Number of items per page
+
+  /open/v2/avatars/custom:
+    get:
+      tags:
+        - Avatar
+      summary: Get Instant Avatar List
+      description: |
+        Retrieve list of user's instant avatars.
+        Returns user's custom instant avatar collection with filtering options.
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - name: name
+          in: query
+          description: Avatar name filter - search avatars by name
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Status filter
+          schema:
+            type: string
+            enum: [processing, completed, failed]
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          avatars:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/CustomAvatarInfo'
+                          total:
+                            type: integer
+                          page:
+                            type: integer
+                          page_size:
+                            type: integer
+
+  /open/v2/avatars/photo_avatars:
+    get:
+      tags:
+        - Avatar
+      summary: Get Photo Avatar List
+      description: |
+        Retrieve list of user's photo avatars.
+        Returns user's photo-based avatar collection with filtering options.
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - name: name
+          in: query
+          description: Avatar name filter
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Status filter
+          schema:
+            type: string
+            enum: [processing, completed, failed]
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          avatars:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/PhotoAvatarInfo'
+                          total:
+                            type: integer
+                          page:
+                            type: integer
+                          page_size:
+                            type: integer
+
+  /open/v2/avatars/product_avatars:
+    get:
+      tags:
+        - Avatar
+      summary: List product avatars
+      description: |
+        Get list of user's product avatars with optional aspect ratio filter.
+        Supports filtering avatars by different aspect ratios for various video formats.
+      parameters:
+        - name: aspect_ratio
+          in: query
+          description: |
+            Filter by aspect ratio:
+            * -1 - All
+            * 0 - Portrait [9:16]
+            * 1 - Landscape [16:9]
+            * 2 - Square [1:1]
+          schema:
+            type: integer
+            minimum: -1
+            maximum: 2
+            default: -1
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          avatars:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/ProductAvatarInfo'
+
+  /open/v2/create_video_from_avatar:
+    post:
+      tags:
+        - Video
+      summary: Create talking avatar video
+      description: |
+        Create a video with talking avatar using script or audio input.
+        Either provide a script for text-to-speech or upload an audio file.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - aspect_ratio
+                - screen_style
+                - avatar_id
+                - avatar_type
+                - voice_id
+              properties:
+                script:
+                  type: string
+                  description: Script content for the avatar to speak (required if audio_url not provided)
+                  example: "Hi, welcome to JoggAI and create longer videos with Talking Avatars in minutes!"
+                audio_url:
+                  type: string
+                  description: URL for audio file (required if script not provided)
+                  example: "https://res.jogg.ai/audio.mp3"
+                aspect_ratio:
+                  type: string
+                  description: Aspect ratio of the output video
+                  enum: [portrait, landscape, square]
+                  example: "portrait"
+                screen_style:
+                  type: integer
+                  description: |
+                    Background style:
+                    * 1 - With background
+                    * 2 - Green screen
+                    * 3 - WebM
+                  enum: [1, 2, 3]
+                  example: 1
+                avatar_id:
+                  type: integer
+                  description: ID of the avatar to use
+                  example: 81
+                avatar_type:
+                  type: integer
+                  description: |
+                    Source type of the avatar:
+                    * 0 - Public avatar
+                    * 1 - Custom avatar
+                  enum: [0, 1]
+                  example: 0
+                voice_id:
+                  type: string
+                  description: ID of the text-to-speech voice
+                  example: "en-US-ChristopherNeural"
+                caption:
+                  type: boolean
+                  description: Enable or disable subtitles
+                  example: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          video_id:
+                            type: string
+                            description: Created video ID
+                            example: "video_123456"
+
+  /open/v2/create_video_from_product:
+    post:
+      tags:
+        - Video
+      summary: Generate Video from Product
+      description: |
+        Create a video from product information with customizable visual style, avatar, voice, and script.
+        This is the final step after creating a product to generate the actual video.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - product_id
+                - aspect_ratio
+                - video_length
+                - language
+                - avatar_id
+                - avatar_type
+                - script_style
+              properties:
+                product_id:
+                  type: string
+                  description: Product ID from product creation
+                  example: "NTIzMzc0NjI5"
+                aspect_ratio:
+                  type: string
+                  description: Video aspect ratio
+                  enum: [portrait, landscape, square]
+                  example: "portrait"
+                video_length:
+                  type: string
+                  description: Video length in seconds
+                  enum: ["15", "30", "60"]
+                  example: "30"
+                language:
+                  type: string
+                  description: Script generation language
+                  example: "english"
+                avatar_id:
+                  type: integer
+                  description: Avatar ID
+                  example: 1
+                avatar_type:
+                  type: integer
+                  description: |
+                    Source type of the avatar:
+                    * 0 - Public avatar
+                    * 1 - Custom avatar
+                  enum: [0, 1]
+                  example: 0
+                voice_id:
+                  type: string
+                  description: Voice ID for text-to-speech
+                  example: "en-US-ChristopherNeural"
+                music_id:
+                  type: integer
+                  description: Background music ID
+                  example: 13
+                script_style:
+                  type: string
+                  description: Script writing style
+                  enum: ["Don't Worry", "Storytime", "Discovery", "Data", "Top 3 reasons", "Light marketing"]
+                  example: "Storytime"
+                visual_style:
+                  type: string
+                  description: Visual style name from visual list
+                  example: "Simple Product Switch"
+                template_id:
+                  type: integer
+                  description: Template ID (optional)
+                template_type:
+                  type: string
+                  description: Template source type
+                  enum: [public, custom]
+                override_script:
+                  type: string
+                  description: Override the auto-generated script
+                caption:
+                  type: boolean
+                  description: Enable or disable subtitles
+                  example: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          product_video_id:
+                            type: string
+                            description: Created product video ID
+                            example: "pv_123456"
+
+  /open/v2/create_video_from_product/preview_list:
+    post:
+      tags:
+        - Video
+      summary: Submit Preview List
+      description: |
+        Submit multiple visual styles for preview generation from a product.
+        This allows you to generate multiple preview videos with different styles simultaneously.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - product_id
+                - aspect_ratio
+                - video_length
+                - language
+                - visual_styles
+              properties:
+                product_id:
+                  type: string
+                  description: Product ID
+                  example: "NTIzMzc0NjI5"
+                aspect_ratio:
+                  type: string
+                  description: |
+                    Video aspect ratio:
+                    * portrait - Portrait [9:16]
+                    * landscape - Landscape [16:9]
+                    * square - Square [1:1]
+                  enum: [portrait, landscape, square]
+                  example: "portrait"
+                video_length:
+                  type: string
+                  description: Video length in seconds
+                  enum: ["15", "30", "60"]
+                  example: "30"
+                language:
+                  type: string
+                  description: Script generation language
+                  example: "english"
+                visual_styles:
+                  type: array
+                  description: List of visual style names to generate previews
+                  items:
+                    type: string
+                  example: ["Simple Product Switch", "Dynamic Showcase"]
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          task_id:
+                            type: string
+                            description: Task ID to check preview generation status
+                            example: "task_preview_123"
+
+  /open/v2/create_video_from_product/render_single_preview:
+    post:
+      tags:
+        - Video
+      summary: Render Video from Preview
+      description: Generate final video from a selected preview
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - preview_id
+              properties:
+                preview_id:
+                  type: string
+                  description: Preview ID from preview list
+                  example: "preview_123"
+                avatar_id:
+                  type: integer
+                  description: Override avatar ID
+                voice_id:
+                  type: string
+                  description: Override voice ID
+                music_id:
+                  type: integer
+                  description: Override music ID
+                caption:
+                  type: boolean
+                  description: Enable subtitles
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          product_video_id:
+                            type: string
+                            example: "pv_123456"
+
+  /open/v2/create_video_with_template:
+    post:
+      tags:
+        - Video
+      summary: Create video from template
+      description: |
+        Create a video using a template with custom variables and settings.
+        Templates support various variable types including text, image, video, and script.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - template_id
+                - template_type
+                - variables
+              properties:
+                template_id:
+                  type: integer
+                  description: Template ID
+                  example: 1234
+                template_type:
+                  type: string
+                  description: Template source type
+                  enum: [common, user]
+                  example: "common"
+                avatar_id:
+                  type: integer
+                  description: Digital person ID
+                  example: 1
+                avatar_type:
+                  type: integer
+                  description: |
+                    Source type of the avatar:
+                    * 0 - Public avatar
+                    * 1 - Custom avatar
+                  enum: [0, 1]
+                  example: 0
+                voice_id:
+                  type: string
+                  description: Voice ID for text-to-speech
+                  example: "en-US-ChristopherNeural"
+                caption:
+                  type: boolean
+                  description: Enable captions
+                  example: true
+                music_id:
+                  type: integer
+                  description: Background music ID
+                  example: 1
+                variables:
+                  type: array
+                  description: Variables to replace in the template
+                  items:
+                    type: object
+                    required:
+                      - type
+                      - name
+                      - properties
+                    properties:
+                      type:
+                        type: string
+                        description: Variable type
+                        enum: [text, image, video, script]
+                      name:
+                        type: string
+                        description: Variable name
+                      properties:
+                        type: object
+                        properties:
+                          content:
+                            type: string
+                            description: Text content (for text type)
+                          url:
+                            type: string
+                            description: URL for media (for image/video type)
+                          asset_id:
+                            type: integer
+                            description: Asset ID (for image/video type)
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          video_id:
+                            type: string
+                            description: Created video ID
+                            example: "video_123456"
+
+  /open/v2/musics:
+    get:
+      tags:
+        - Asset
+      summary: List background music
+      description: |
+        Get available background music with pagination.
+        Supports filtering and sorting of music tracks.
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: page_size
+          in: query
+          description: Items per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          musics:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/MusicInfo'
+                          total:
+                            type: integer
+                          page:
+                            type: integer
+                          page_size:
+                            type: integer
+
+  /open/v2/photo_avatar:
+    get:
+      tags:
+        - Avatar
+      summary: Check Motion Status
+      description: Check the status of motion generation task by motion ID
+      parameters:
+        - name: motion_id
+          in: query
+          required: true
+          description: Motion ID from the motion generation task
+          schema:
+            type: string
+            example: "motion_123"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          motion_id:
+                            type: string
+                          status:
+                            type: string
+                            description: Task status
+                            enum: [pending, processing, completed, failed]
+                          avatar_id:
+                            type: integer
+                          preview_url:
+                            type: string
+
+  /open/v2/photo_avatar/add_motion:
+    post:
+      tags:
+        - Avatar
+      summary: Add Motion to Photo Avatar
+      description: Add motion to a photo avatar to make it animated
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - image_url
+                - name
+                - voice_id
+                - model
+              properties:
+                image_url:
+                  type: string
+                  description: Photo avatar image URL
+                  example: "https://res.jogg.ai/photo.jpg"
+                photo_id:
+                  type: string
+                  description: Photo ID from photo generation
+                name:
+                  type: string
+                  description: Avatar name
+                  example: "My Photo Avatar"
+                voice_id:
+                  type: string
+                  description: Voice ID to associate with avatar
+                  example: "en-US-ChristopherNeural"
+                model:
+                  type: string
+                  description: Motion model version
+                  enum: ["1.0", "2.0", "2.0-Pro", "3.0"]
+                  example: "2.0"
+                description:
+                  type: string
+                  description: Avatar description
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          motion_id:
+                            type: string
+                          status:
+                            type: string
+                            description: Motion generation status
+
+  /open/v2/photo_avatar/photo:
+    get:
+      tags:
+        - Avatar
+      summary: Check Photo Generation Status
+      description: Check the status of photo avatar generation task by photo ID
+      parameters:
+        - name: photo_id
+          in: query
+          required: true
+          description: Photo ID from the generation task
+          schema:
+            type: string
+            example: "photo_123"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          photo_id:
+                            type: string
+                          status:
+                            type: string
+                            description: Photo generation status
+                            enum: [in_progress, success, error]
+                          image_url_list:
+                            type: array
+                            items:
+                              type: string
+                          msg:
+                            type: string
+
+  /open/v2/photo_avatar/photo/generate:
+    post:
+      tags:
+        - Avatar
+      summary: Generate Photo Avatar
+      description: Generate AI photo avatar based on provided parameters
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - age
+                - avatar_style
+                - gender
+                - model
+                - aspect_ratio
+              properties:
+                age:
+                  type: string
+                  description: Avatar age group
+                  enum: [Teenager, "Young adult", Adult, Elderly]
+                  example: "Adult"
+                avatar_style:
+                  type: string
+                  description: Avatar style category
+                  enum: [Professional, Social]
+                  example: "Professional"
+                gender:
+                  type: string
+                  description: Avatar gender
+                  enum: [Female, Male]
+                  example: "Female"
+                model:
+                  type: string
+                  description: Photo generation model style
+                  enum: [classic, modern]
+                  example: "modern"
+                aspect_ratio:
+                  type: integer
+                  description: |
+                    Photo aspect ratio:
+                    * 0 - Portrait [9:16]
+                    * 1 - Landscape [16:9]
+                  enum: [0, 1]
+                  example: 0
+                ethnicity:
+                  type: string
+                  description: Avatar ethnicity
+                  enum: [European, African, "South Asian", "East Asian", "Middle Eastern", "South American", "North American"]
+                background:
+                  type: string
+                  description: Background description
+                appearance:
+                  type: string
+                  description: Appearance description
+                image_url:
+                  type: string
+                  description: Reference image URL
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          photo_id:
+                            type: string
+
+  /open/v2/product:
+    post:
+      tags:
+        - Product
+      summary: Create Product V2
+      description: |
+        Create a new product with URL analysis or manual input.
+        This is Step 1 in the product video generation workflow.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  description: Product URL to crawl information from
+                  example: "https://www.amazon.com/product/..."
+                name:
+                  type: string
+                  description: Product name (required if no URL)
+                  example: "Physicians Formula Happy Booster Heart Blush"
+                description:
+                  type: string
+                  description: Product description and selling points
+                  example: "Brush on a radiant blushing glow..."
+                target_audience:
+                  type: string
+                  description: Target audience
+                  example: "Beauty enthusiasts"
+                media:
+                  type: array
+                  description: Media resources array
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: integer
+                        description: |
+                          Media type:
+                          * 1 - Image
+                          * 2 - Video
+                        enum: [1, 2]
+                        example: 1
+                      name:
+                        type: string
+                        example: "product.jpg"
+                      url:
+                        type: string
+                        example: "https://res.jogg.ai/media.jpg"
+                      description:
+                        type: string
+                        example: "Product front view"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/ProductInfo'
+
+    put:
+      tags:
+        - Product
+      summary: Update Product V2
+      description: Update an existing product information (Step 2 - Optional)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - product_id
+              properties:
+                product_id:
+                  type: string
+                  description: Product ID from creation step
+                  example: "NTQ0MTkzNjg"
+                name:
+                  type: string
+                  description: Updated product name
+                description:
+                  type: string
+                  description: Updated description
+                target_audience:
+                  type: string
+                  description: Updated target audience
+                media:
+                  type: array
+                  description: Updated media resources
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: integer
+                        enum: [1, 2]
+                      name:
+                        type: string
+                      url:
+                        type: string
+                      description:
+                        type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+
+  /open/v2/product_avatar:
+    get:
+      tags:
+        - Avatar
+      summary: Check image to product avatar status
+      description: Get the status and details of image to product avatar conversion
+      parameters:
+        - name: motion_id
+          in: query
+          required: true
+          description: Motion ID for the avatar creation task
+          schema:
+            type: string
+            example: "motion_123456"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          motion_id:
+                            type: string
+                          avatar_id:
+                            type: integer
+                          status:
+                            type: string
+                            description: Avatar creation status
+                            enum: [pending, processing, completed, failed]
+                          preview_url:
+                            type: string
+                          error_msg:
+                            type: string
+
+  /open/v2/product_avatar/add_motion:
+    post:
+      tags:
+        - Avatar
+      summary: Convert image to product avatar
+      description: Create a product avatar from generated image with motion and voice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - image_url
+                - name
+                - voice_id
+              properties:
+                image_url:
+                  type: string
+                  description: Product avatar image URL
+                  example: "https://res.jogg.ai/product-avatar.jpg"
+                name:
+                  type: string
+                  description: Product avatar name
+                  example: "Product Presenter"
+                voice_id:
+                  type: string
+                  description: Voice ID to associate
+                  example: "en-US-ChristopherNeural"
+                aspect_ratio:
+                  type: integer
+                  description: |
+                    Aspect ratio:
+                    * 0 - Portrait [9:16]
+                    * 1 - Landscape [16:9]
+                    * 2 - Square [1:1]
+                  enum: [0, 1, 2]
+                  example: 0
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          motion_id:
+                            type: string
+                          avatar_id:
+                            type: integer
+
+  /open/v2/product_avatar/generation:
+    post:
+      tags:
+        - Avatar
+      summary: Create product avatar image
+      description: Generate product avatar images using AI with specified parameters
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - prompt
+                - num_images
+              properties:
+                prompt:
+                  type: string
+                  description: Image generation prompt
+                  example: "Professional product presenter in business attire"
+                num_images:
+                  type: integer
+                  description: Number of images to generate
+                  minimum: 1
+                  maximum: 4
+                  example: 4
+                aspect_ratio:
+                  type: integer
+                  description: |
+                    Aspect ratio:
+                    * 0 - Portrait [9:16]
+                    * 1 - Landscape [16:9]
+                    * 2 - Square [1:1]
+                  enum: [0, 1, 2]
+                  example: 0
+                style:
+                  type: string
+                  description: Image style
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          batch_id:
+                            type: string
+                            description: Batch ID to check generation status
+
+  /open/v2/product_avatar/generation/{batch_id}:
+    get:
+      tags:
+        - Avatar
+      summary: Check product avatar image generation status
+      description: Get the status and results of product avatar image generation by batch ID
+      parameters:
+        - name: batch_id
+          in: path
+          required: true
+          description: Batch ID from generation request
+          schema:
+            type: string
+            example: "batch_123456"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          batch_id:
+                            type: string
+                          status:
+                            type: string
+                            description: Generation batch status
+                            enum: [pending, processing, completed, failed]
+                          generations:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                image_url:
+                                  type: string
+                                  description: Generated image URL
+                                status:
+                                  type: string
+                                  description: Individual image generation status
+
+  /open/v2/product_previews:
+    get:
+      tags:
+        - Video
+      summary: Get Product Preview List
+      description: |
+        Retrieve paginated list of product previews with filtering and sorting options.
+        Previews are generated videos that help you choose the best style before final rendering.
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+        - name: status
+          in: query
+          description: |
+            Filter by status:
+            * 3 - Processing
+            * 4 - Success
+            * 5 - Failed
+          schema:
+            type: integer
+            enum: [3, 4, 5]
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            default: "created_at"
+        - name: sort_order
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: "desc"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          previews:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/PreviewInfo'
+                          total:
+                            type: integer
+                          page:
+                            type: integer
+                          page_size:
+                            type: integer
+
+  /open/v2/product_video/{product_video_id}:
+    get:
+      tags:
+        - Video
+      summary: Check Product Video Status
+      description: Get the current status and details of a product video generation
+      parameters:
+        - name: product_video_id
+          in: path
+          required: true
+          description: Product video ID
+          schema:
+            type: string
+            example: "pv_123456"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/VideoDetails'
+
+  /open/v2/product_videos:
+    get:
+      tags:
+        - Video
+      summary: Get Product Video List
+      description: |
+        Retrieve paginated list of generated product videos with filtering and sorting options.
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+        - name: status
+          in: query
+          schema:
+            type: integer
+            enum: [3, 4, 5]
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            default: "created_at"
+        - name: sort_order
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: "desc"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          videos:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/VideoDetails'
+                          total:
+                            type: integer
+                          page:
+                            type: integer
+                          page_size:
+                            type: integer
+
+  /open/v2/template/custom/{id}:
+    get:
+      tags:
+        - Template
+      summary: Get specific custom template details
+      description: |
+        Retrieve detailed information about a specific custom template including its variables.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Template ID
+          schema:
+            type: integer
+            minimum: 1
+            example: 123
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/TemplateDetails'
+
+  /open/v2/template_video/{video_id}:
+    get:
+      tags:
+        - Video
+      summary: Get template video status and details
+      description: Retrieve video information, status, and metadata by video ID
+      parameters:
+        - name: video_id
+          in: path
+          required: true
+          description: Video ID
+          schema:
+            type: string
+            example: "video_123456789"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/VideoDetails'
+
+  /open/v2/template_videos:
+    get:
+      tags:
+        - Video
+      summary: List template videos
+      description: |
+        Get paginated list of template videos with optional filtering and sorting.
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+        - name: status
+          in: query
+          description: Filter by status
+          schema:
+            type: integer
+            enum: [3, 4, 5]
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            default: "created_at"
+        - name: sort_order
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: "desc"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          videos:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/VideoDetails'
+                          total:
+                            type: integer
+                          page:
+                            type: integer
+                          page_size:
+                            type: integer
+
+  /open/v2/templates/custom:
+    get:
+      tags:
+        - Template
+      summary: List user's custom templates
+      description: |
+        Retrieve a list of user's custom templates with optional filtering by aspect ratio.
+      parameters:
+        - name: aspect_ratio
+          in: query
+          description: |
+            Filter by aspect ratio:
+            * -1 - All
+            * 0 - Portrait [9:16]
+            * 1 - Landscape [16:9]
+            * 2 - Square [1:1]
+          schema:
+            type: integer
+            enum: [-1, 0, 1, 2]
+            default: -1
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          templates:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/TemplateInfo'
+
+  /open/v2/upload/asset:
+    post:
+      tags:
+        - Asset
+      summary: Upload asset file
+      description: |
+        Upload an asset file and get signed URL for direct upload to cloud storage.
+        Use the returned sign_url to upload your file with a PUT request.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - filename
+              properties:
+                filename:
+                  type: string
+                  description: Name of the file to upload
+                  example: "product-image.jpg"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          sign_url:
+                            type: string
+                            description: Signed URL for file upload
+                          asset_id:
+                            type: string
+                            description: Asset ID after upload
+
+  /open/v2/user/remaining_quota:
+    get:
+      tags:
+        - User
+      summary: Get Remaining Quota
+      description: Retrieve the remaining JoggAI API quota for the authenticated user
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          remaining_quota:
+                            type: integer
+                            description: Remaining API quota
+                            example: 1000
+                          total_quota:
+                            type: integer
+                            description: Total API quota
+                            example: 5000
+
+  /open/v2/user/whoami:
+    get:
+      tags:
+        - User
+      summary: Get Current User Information
+      description: Easily retrieve and manage your account details with JoggAI API
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          user_id:
+                            type: string
+                            example: "user_123"
+                          email:
+                            type: string
+                            example: "user@example.com"
+                          username:
+                            type: string
+                            example: "johndoe"
+
+  /open/v2/video_translate/:
+    post:
+      tags:
+        - Video
+      summary: Translate Video
+      description: |
+        Create a video translation task with specified parameters including target language, voice, and subtitle options.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - video_url
+                - target_language
+              properties:
+                video_url:
+                  type: string
+                  description: URL of the video to translate
+                  example: "https://res.jogg.ai/video.mp4"
+                target_language:
+                  type: string
+                  description: Target language for translation
+                  example: "spanish"
+                voice_id:
+                  type: string
+                  description: Voice ID for dubbed audio
+                  example: "es-ES-ElviraNeural"
+                enable_subtitles:
+                  type: boolean
+                  description: Enable translated subtitles
+                  example: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          video_translate_id:
+                            type: string
+                            description: Translation task ID
+                            example: "vt_123456"
+
+  /open/v2/video_translate/{video_translate_id}:
+    get:
+      tags:
+        - Video
+      summary: Check Translation Status
+      description: Get the current status and details of a video translation task
+      parameters:
+        - name: video_translate_id
+          in: path
+          required: true
+          description: Video translation task ID
+          schema:
+            type: string
+            example: "vt_123456"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          status:
+                            type: string
+                            description: Translation task status
+                            enum: [pending, processing, completed, failed]
+                          video_url:
+                            type: string
+                            description: Translated video URL (when completed)
+                          subtitle_url:
+                            type: string
+                            description: Translated subtitle URL (when completed)
+
+  /open/v2/video_translate/target_languages:
+    get:
+      tags:
+        - Video
+      summary: List Target Languages
+      description: Get the list of supported target languages for video translation
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          languages:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                  example: "spanish"
+                                name:
+                                  type: string
+                                  example: "Spanish"
+
+  /open/v2/visual_styles:
+    get:
+      tags:
+        - Asset
+      summary: List visual styles
+      description: |
+        Get available visual styles/templates filtered by aspect ratio.
+        Visual styles determine the look and feel of your product videos.
+      parameters:
+        - name: aspect_ratio
+          in: query
+          description: Filter by aspect ratio
+          schema:
+            type: string
+            enum: [portrait, landscape, square]
+            example: "portrait"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          visual_styles:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 2400
+                                name:
+                                  type: string
+                                  example: "Simple split screen template"
+                                preview_url:
+                                  type: string
+                                  example: "https://res.jogg.ai/preview.jpg"
+
+  /open/v2/voices:
+    get:
+      tags:
+        - Voice
+      summary: Get Timbre List
+      description: |
+        Retrieve a list of available timbres with filtering options.
+        Supports pagination and various filters including gender, language, age, and use case.
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - name: gender
+          in: query
+          description: Filter by gender
+          schema:
+            type: string
+            enum: [female, male]
+        - name: language
+          in: query
+          description: Filter by language
+          schema:
+            type: string
+            example: "english"
+        - name: age
+          in: query
+          description: Filter by age group
+          schema:
+            type: string
+            enum: [young, middle_aged, old]
+        - name: use_case
+          in: query
+          description: Filter by use case
+          schema:
+            type: string
+            example: "narrative_story"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          voices:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/VoiceInfo'
+                          total:
+                            type: integer
+                          page:
+                            type: integer
+                          page_size:
+                            type: integer
+
+  /open/v2/voices/custom:
+    get:
+      tags:
+        - Voice
+      summary: Get User Timbre List
+      description: |
+        Retrieve a list of user's custom timbres with filtering options.
+        Returns user's personalized voice collection.
+      parameters:
+        - name: language
+          in: query
+          description: Filter by language
+          schema:
+            type: string
+            example: "english"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          voices:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/VoiceInfo'
+                          total:
+                            type: integer
+
+  /open/v2/endpoints:
+    get:
+      tags:
+        - Webhook
+      summary: List Webhook Endpoints
+      description: |
+        Retrieve a list of all webhook endpoints configured for your account.
+        Webhooks allow you to receive real-time notifications about events in your JoggAI workspace.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          endpoints:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/WebhookEndpoint'
+
+  /open/v2/endpoint:
+    post:
+      tags:
+        - Webhook
+      summary: Add Webhook Endpoint
+      description: |
+        Create a new webhook endpoint to receive event notifications.
+        You can specify which events to subscribe to and configure the endpoint URL.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - url
+                - status
+                - events
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  description: Webhook endpoint URL that will receive POST requests
+                  example: "https://your-domain.com/webhook"
+                status:
+                  type: string
+                  description: Initial status of the webhook
+                  enum: [enabled, disabled]
+                  example: "enabled"
+                events:
+                  type: array
+                  description: List of event types to subscribe to
+                  items:
+                    type: string
+                  example: ["video.completed", "video.failed"]
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/WebhookEndpoint'
+
+  /open/v2/endpoint/{endpoint_id}:
+    put:
+      tags:
+        - Webhook
+      summary: Update Webhook Endpoint
+      description: |
+        Update an existing webhook endpoint configuration including URL, status, and subscribed events.
+      parameters:
+        - name: endpoint_id
+          in: path
+          required: true
+          description: Unique webhook endpoint identifier
+          schema:
+            type: string
+            example: "wh_123456"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - url
+                - status
+                - events
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  description: Updated webhook endpoint URL
+                  example: "https://your-domain.com/webhook"
+                status:
+                  type: string
+                  description: Webhook status
+                  enum: [enabled, disabled]
+                  example: "enabled"
+                events:
+                  type: array
+                  description: Updated list of event types
+                  items:
+                    type: string
+                  example: ["video.completed", "video.failed", "avatar.created"]
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/WebhookEndpoint'
+
+    delete:
+      tags:
+        - Webhook
+      summary: Delete Webhook Endpoint
+      description: |
+        Remove a webhook endpoint from your account.
+        This action cannot be undone and the endpoint will stop receiving events immediately.
+      parameters:
+        - name: endpoint_id
+          in: path
+          required: true
+          description: Unique webhook endpoint identifier
+          schema:
+            type: string
+            example: "wh_123456"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          message:
+                            type: string
+                            example: "webhook deleted"
+
+  /open/v2/events:
+    get:
+      tags:
+        - Webhook
+      summary: List Webhook Events
+      description: |
+        Get a list of all available webhook event types that you can subscribe to.
+        Each event type represents a specific action or status change in the system.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BaseResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          events:
+                            type: array
+                            description: List of available event types
+                            items:
+                              type: string
+                            example:
+                              - "video.completed"
+                              - "video.failed"
+                              - "video.processing"
+                              - "avatar.created"
+                              - "avatar.failed"
+
+components:
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: API key for authentication. Obtain your key from the JoggAI dashboard.
+
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      description: Page number for pagination
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+        example: 1
+
+    PageSizeParam:
+      name: page_size
+      in: query
+      description: Number of items per page
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 10
+        example: 10
+
+  schemas:
+    BaseResponse:
+      type: object
+      required:
+        - code
+        - msg
+      properties:
+        code:
+          type: integer
+          description: |
+            Business status code:
+            * 0 - Success
+            * 10104 - Record not found
+            * 10105 - Invalid API key
+            * 18020 - Insufficient credit
+            * 18025 - No permission to call APIs
+            * 40000 - Parameter error
+            * 50000 - System error
+          example: 0
+        msg:
+          type: string
+          description: Response message
+          example: "Success"
+
+    VideoDetails:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Video ID
+          example: "video_123456"
+        title:
+          type: string
+          description: Video title
+          example: "Product Demo Video"
+        status:
+          type: string
+          description: Video generation status
+          enum: [pending, processing, completed, failed]
+          example: "completed"
+        video_url:
+          type: string
+          description: Video URL (available when completed)
+          example: "https://res.jogg.ai/video.mp4"
+        cover_url:
+          type: string
+          description: Cover image URL
+          example: "https://res.jogg.ai/cover.jpg"
+        duration:
+          type: integer
+          description: Video duration in seconds
+          example: 30
+        created_at:
+          type: integer
+          description: Creation timestamp
+          example: 1732806631
+
+    AvatarInfo:
+      type: object
+      properties:
+        avatar_id:
+          type: integer
+          description: Avatar ID
+          example: 81
+        name:
+          type: string
+          description: Avatar name
+          example: "Amanda outdoors"
+        cover_url:
+          type: string
+          description: Avatar preview image URL
+          example: "https://res.jogg.ai/avatar-cover.png"
+        aspect_ratio:
+          type: integer
+          description: |
+            Supported aspect ratio:
+            * 0 - Portrait [9:16]
+            * 1 - Landscape [16:9]
+            * 2 - Square [1:1]
+          enum: [0, 1, 2]
+        style:
+          type: string
+          description: Avatar style
+          enum: [professional, social]
+        gender:
+          type: string
+          description: Avatar gender
+          enum: [female, male]
+        age:
+          type: string
+          description: Avatar age group
+          enum: [adult, senior, young_adult]
+        scene:
+          type: string
+          description: Avatar scene type
+        ethnicity:
+          type: string
+          description: Avatar ethnicity
+
+    CustomAvatarInfo:
+      type: object
+      properties:
+        avatar_id:
+          type: integer
+          description: Avatar ID
+          example: 123
+        name:
+          type: string
+          description: Avatar name
+          example: "My Custom Avatar"
+        cover_url:
+          type: string
+          description: Avatar cover image URL
+        status:
+          type: string
+          description: Avatar status
+          enum: [processing, completed, failed]
+        created_at:
+          type: integer
+          description: Creation timestamp
+
+    PhotoAvatarInfo:
+      type: object
+      properties:
+        avatar_id:
+          type: integer
+          description: Avatar ID
+        name:
+          type: string
+          description: Avatar name
+        cover_url:
+          type: string
+          description: Avatar cover image URL
+        status:
+          type: string
+          description: Avatar status
+          enum: [processing, completed, failed]
+        aspect_ratio:
+          type: integer
+          description: |
+            Aspect ratio:
+            * 0 - Portrait [9:16]
+            * 1 - Landscape [16:9]
+            * 2 - Square [1:1]
+        style:
+          type: string
+          description: Avatar style
+        gender:
+          type: string
+          description: Avatar gender
+        age:
+          type: string
+          description: Avatar age group
+
+    ProductAvatarInfo:
+      type: object
+      properties:
+        avatar_id:
+          type: integer
+          description: Avatar ID
+        name:
+          type: string
+          description: Avatar name
+        cover_url:
+          type: string
+          description: Avatar cover image URL
+        preview_url:
+          type: string
+          description: Avatar preview video URL
+        aspect_ratio:
+          type: integer
+          description: |
+            Aspect ratio:
+            * 0 - Portrait [9:16]
+            * 1 - Landscape [16:9]
+            * 2 - Square [1:1]
+
+    MusicInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Music ID
+          example: 1
+        name:
+          type: string
+          description: Music name
+          example: "Upbeat Background"
+        music_url:
+          type: string
+          description: Music file URL
+          example: "https://res.jogg.ai/music/example.mp3"
+        duration:
+          type: integer
+          description: Music duration in seconds
+          example: 120
+
+    ProductInfo:
+      type: object
+      properties:
+        product_id:
+          type: string
+          description: Product ID
+          example: "NTQ0MTkzNjg"
+        url:
+          type: string
+          description: Product URL
+        name:
+          type: string
+          description: Product name
+        description:
+          type: string
+          description: Product description
+        target_audience:
+          type: string
+          description: Target audience
+        media:
+          type: array
+          description: Product media resources
+          items:
+            type: object
+            properties:
+              type:
+                type: integer
+                description: |
+                  Media type:
+                  * 1 - Image
+                  * 2 - Video
+                enum: [1, 2]
+              name:
+                type: string
+                description: Media file name
+              url:
+                type: string
+                description: Media file URL
+              description:
+                type: string
+                description: Media description
+
+    PreviewInfo:
+      type: object
+      properties:
+        preview_id:
+          type: string
+          description: Preview ID
+        video_url:
+          type: string
+          description: Preview video URL
+        cover_url:
+          type: string
+          description: Preview cover image URL
+        visual_style:
+          type: string
+          description: Visual style name
+        status:
+          type: string
+          description: Preview generation status
+          enum: [processing, completed, failed]
+        created_at:
+          type: integer
+          description: Creation timestamp
+
+    TemplateInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Template ID
+        name:
+          type: string
+          description: Template name
+        cover_url:
+          type: string
+          description: Template preview image
+        preview_url:
+          type: string
+          description: Template preview video
+        aspect_ratio:
+          type: integer
+          description: |
+            Aspect ratio:
+            * 0 - Portrait [9:16]
+            * 1 - Landscape [16:9]
+            * 2 - Square [1:1]
+          enum: [0, 1, 2]
+
+    TemplateDetails:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Template ID
+        name:
+          type: string
+          description: Template name
+        cover_url:
+          type: string
+          description: Template preview image URL
+        preview_url:
+          type: string
+          description: Template preview video URL
+        aspect_ratio:
+          type: integer
+          description: |
+            Aspect ratio:
+            * 0 - Portrait [9:16]
+            * 1 - Landscape [16:9]
+            * 2 - Square [1:1]
+        variables:
+          type: array
+          description: Template variables
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: Variable name
+              type:
+                type: string
+                description: Variable type
+                enum: [text, image, video, script]
+              required:
+                type: boolean
+                description: Whether variable is required
+
+    VoiceInfo:
+      type: object
+      properties:
+        voice_id:
+          type: string
+          description: Voice identifier
+          example: "en-US-ChristopherNeural"
+        name:
+          type: string
+          description: Voice name
+          example: "Christopher"
+        language:
+          type: string
+          description: Voice language
+          example: "english"
+        gender:
+          type: string
+          description: Voice gender
+          enum: [female, male]
+        age:
+          type: string
+          description: Voice age group
+          enum: [young, middle_aged, old]
+        audition_url:
+          type: string
+          description: Voice sample URL
+          example: "https://res.jogg.ai/voice-sample.mp3"
+        use_case:
+          type: string
+          description: Recommended use case
+          example: "narrative_story"
+
+    WebhookEndpoint:
+      type: object
+      properties:
+        endpoint_id:
+          type: string
+          description: Unique webhook endpoint identifier
+          example: "wh_123456789"
+        url:
+          type: string
+          format: uri
+          description: Webhook endpoint URL
+          example: "https://your-domain.com/webhook"
+        secret:
+          type: string
+          description: Secret key for verifying webhook signatures
+          example: "whsec_abc123xyz"
+        status:
+          type: string
+          description: Webhook status
+          enum: [enabled, disabled]
+          example: "enabled"
+        events:
+          type: array
+          description: Subscribed event types
+          items:
+            type: string
+          example: ["video.completed", "video.failed"]
+        username:
+          type: string
+          description: Username of the webhook owner
+          example: "johndoe"
+        created_at:
+          type: integer
+          description: Creation timestamp (Unix timestamp)
+          example: 1732806631
+

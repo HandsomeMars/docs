@@ -1,0 +1,58 @@
+---
+title: "List Webhook Events"
+openapi: "GET /open/v2/events"
+---
+
+获取所有可订阅的 Webhook 事件类型列表。
+
+每种事件类型代表系统中的特定操作或状态变化。
+
+## 使用场景
+
+- 查看所有可用的事件类型
+- 选择需要订阅的事件
+- 了解事件命名规范
+
+## 常见事件类型
+
+### 视频相关事件
+
+- **video.completed** - 视频生成完成
+- **video.failed** - 视频生成失败
+- **video.processing** - 视频处理中
+
+### Avatar 相关事件
+
+- **avatar.created** - Avatar 创建成功
+- **avatar.failed** - Avatar 创建失败
+
+<Tip>
+建议至少订阅 `*.completed` 和 `*.failed` 事件，以便及时了解任务的最终状态。
+</Tip>
+
+## Webhook 有效载荷示例
+
+当事件触发时，您的端点将收到类似以下的 JSON 载荷：
+
+```json
+{
+  "event": "video.completed",
+  "timestamp": 1732806631,
+  "data": {
+    "video_id": "video_123456",
+    "status": "completed",
+    "video_url": "https://res.jogg.ai/video.mp4"
+  }
+}
+```
+
+## 最佳实践
+
+<Info>
+- 使用幂等性处理：同一事件可能被发送多次
+- 实现重试机制：如果处理失败，系统会重试发送
+- 快速响应：在 5 秒内返回 2xx 状态码
+- 异步处理：收到事件后立即返回，然后异步处理业务逻辑
+</Info>
+
+

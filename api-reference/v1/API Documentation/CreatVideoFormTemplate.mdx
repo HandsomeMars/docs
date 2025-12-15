@@ -1,0 +1,368 @@
+---
+title: "Create Video from Your Template"
+description: "How to create video from Your Template."
+---
+
+# **Introduction**
+
+### **Core Concept: Templates and Variables**
+
+The core of this feature is the use of a pre-designed **Template**. Each template includes a fixed layout, animations, background music, and a series of fillable **Variables** or placeholders.
+
+When calling the API, you only need to specify the `template_id` to use and provide a JSON object containing the specific values for all variables.
+
+- **Separation of Design and Content:** You don't need to worry about the visual design details of the video; just focus on providing the content.
+- **Batch Generation:** This method is ideal for scenarios that require batch generation of stylistically consistent videos, such as news flashes, product introductions, marketing campaigns, etc.
+- **Asynchronous Processing:** Like all video creation tasks, this is an **asynchronous** process. Once the task is complete, we will notify you of the result via a webhook.
+
+# **Quick Start**
+
+## **Prerequisite**
+
+- You need a JoggAI account with API access.
+- You need to go through the [**Get your API key**](/api-reference/v1/QuickStart/GettingStarted)**.**
+
+### **How to Find Templates and Variables?**
+
+Before using this feature, you need to know:
+
+1. Which templates are available (`template_id`).
+2. Which variables need to be filled for each template (the name and type of the variables).
+
+You can obtain this information in the following ways:
+
+- **Template Library API:** Call `GET /v1/templates/custom` to get a list of all available templates and their details.
+- **Developer Dashboard:** Log in to your [Jogg.ai](http://Jogg.ai) developer dashboard and browse and manage your templates in the "Template Library" section.
+
+## **Procedure**
+
+1. Creating Template through the Interface.
+2. Define the replaceable elements in the template.
+3. Modify Template Elements and Generate Video.
+
+## **Step 1:** Creating Template through the Interface
+
+### **Create your own templates in the user interface**
+
+There are two types of templates. One is in the public library, and the other is created by individuals.
+
+The templates created by yourself can be directly copied with their IDs.
+
+![](/images/copy_tp_id.jpg)
+
+### **Obtain the list of templates**
+
+You can also obtain the template_id you need by getting the list of templates.
+
+[**`Get My Templates`**](/api-reference/v1/Template/GetMyTemplate)
+
+Through the following request, you can get the templates that you created yourself.
+
+<CodeGroup>
+
+```json Request
+curl --request GET \
+  --url 'https://api.jogg.ai/v1/templates/custom' \
+  --header 'x-API-key: <API-key>'
+  --header 'Content-Type: application/json' 
+```
+
+
+```json Response
+{
+  "code": 123,
+  "msg": "<string>",
+  "data": {
+    "templates": [
+      {
+        "id": 'template_id',
+        "name": "name",
+        "cover_url": "https://res.JoggAI.ai/cover.png",
+        "preview_url": "https://res.JoggAI.ai/preview.png",
+        "aspect_ratio": 0
+      }
+      ...
+    ]
+  }
+}
+```
+
+</CodeGroup>
+
+## **Step 2:** Define the replaceable elements in the template.
+
+On the interface, define variables.
+
+You can customize variable names for the elements in the template to facilitate your identification and replacement of them. 
+
+Tip: Currently, only `script content, text, image, video and avatar` are supported.
+
+![](/images/text_element.png)
+
+## **Step 3:** Modify Template Elements and Generate Video\*\*.\*\*
+
+Pass the parameters for generating the video to the template, and it will return a generated `video_ID`.
+
+<CodeGroup>
+
+```json Request
+curl --location --request POST \
+--url  'https://api.jogg.ai/v1/create_video_with_template' \
+--header  'x-API-key: <your-API-key>' \
+--header  'Content-Type: application/json'
+
+--data-raw  '{
+	"template_id": 0,         // required；
+	"template_type": "user",  // required；Template type; default is "user";
+	"avatar_id": 0,           // required；Digital person ID;
+	"avatar_type": 0,         // required；Determine the source of the avatar, whether it is in a public library or created by an individual
+    "lang": "english",        // required;t
+	"video_name":"my_video",
+	"variables": [
+		{
+			"type": "text",    
+			"name": "Text_element",   // Name of the variable to be replaced as set in the template
+			"properties": {
+				"content": "test"
+			},
+
+		},
+		{
+			"type": "image",
+			"name": "image_name",
+			"properties": {
+				"url": "<your-image-url>"  // "https://res.jogg.ai/image_name.jpg"
+			}
+
+		},
+		{
+			"type": "video",
+			"name": "video_name",
+			"properties": {
+				"url": "<your-video-url>"  // "https://res.jogg.ai/video_name.mp4"
+			}
+
+		},
+		{
+			"type": "script",
+			"name": "script_en",
+			"properties": {
+				"content": "script_content"
+			}
+		}
+	]
+}
+```
+
+
+```json Response
+```
+
+</CodeGroup>
+
+# **Replace Text / Image / Video / in Template**
+
+How to replace the text, images and videos in the template.
+
+## **Relevant parameters**
+
+`Text Properties:`
+
+- `content: Text content.`
+
+`Image Properties:`
+
+- **`url:`**` URL of the image content.`
+
+`Video Properties:`
+
+- **`url:`**` URL of the video content.`
+
+## **Example**
+
+Define the variable.
+
+![](/images/media_element.jpg)
+
+Modify Template Elements and Generate Video.
+
+<CodeGroup>
+
+```json Request
+curl --location --request POST \
+--url  'https://api.jogg.ai/v1/create_video_with_template' \
+--header  'x-API-key: <your-API-key>' \
+--header  'Content-Type: application/json'
+
+--data-raw  '{
+	"template_id": 0,         // required；
+	"template_type": "user",  // required；Template type; default is "user"
+	"avatar_id": 0,           // required；Digital person ID;
+	"avatar_type": 0,         // required；Determine the source of the avatar, whether it is in a public library or created by an individual
+    "lang": "english",        // required;The language;
+	"video_name":"my_video",
+	"variables": [
+		{
+			"type": "text",    
+			"name": "Text_element",   // Name of the variable to be replaced as set in the template
+			"properties": {
+				"content": "test"
+			}
+		},
+		{
+			"type": "image",
+			"name": "image_name",
+			"properties": {
+				"url": "<your-image-url>"  // "https://res.jogg.ai/image_name.jpg"
+			}
+
+		},
+		{
+			"type": "video",
+			"name": "video_name",
+			"properties": {
+				"url": "<your-video-url>"  // "https://res.jogg.ai/video_name.mp4"
+			}
+
+		}
+	]
+}
+```
+
+
+```json Response
+```
+
+</CodeGroup>
+
+# **Replace Script content in Template**
+
+How to replace the scripts content within the template.
+
+## **Relevant parameters**
+
+`Script Properties:`
+
+- `content: Script content.`
+
+## **Example**
+
+Define the variable.
+
+![](/images/script_en.png)
+
+Modify Template Elements and Generate Video.
+
+<CodeGroup>
+
+```powershell Resquest
+curl --location --request POST \
+--url  'https://api.jogg.ai/v1/create_video_with_template' \
+--header  'x-API-key: <your-API-key>' \
+--header  'Content-Type: application/json'
+
+--data-raw  '{
+	"template_id": 0,         // required；
+	"template_type": "user",  // required；Template type; default is "user";
+	"avatar_id": 0,           // required；Digital person ID;
+	"avatar_type": 0,         // required；Determine the source of the avatar, whether it is in a public library or created by an individual
+    "lang": "english",         // required;The language;
+	"video_name":"my_video"   
+	"variables": [
+		{
+      "type": "script",
+      "name": "script_en",
+      "properties": {
+        "content": "script_content"  
+      }
+
+    }
+	]
+}
+```
+
+
+```powershell Response
+{
+  "data": {
+    "project_id": "<video_id>"
+  }
+}
+```
+
+</CodeGroup>
+
+# **Replace Avatar in Template**
+
+How to replace the Avatar within the template.
+
+## **Relevant parameters**
+
+`Avatar Properties:`
+
+- `content: Avatar ID.`
+
+## **Example**
+
+Modify the Avatar ID and Generate Video.
+
+<CodeGroup>
+
+```powershell Resquest
+curl --location --request POST \
+--url  'https://api.jogg.ai/v1/create_video_with_template' \
+--header  'x-API-key: <your-API-key>' \
+--header  'Content-Type: application/json'
+
+--data-raw  '{
+	"template_id": 0,         // required；
+	"template_type": "user",  // required；Template type; default is "user";
+	"avatar_id": 0,           // required；Set the corresponding avatar ID;
+	"avatar_type": 0,         // required；Determine the source of the avatar, whether it is in a public library or created by an individual
+    "lang": "english",         // required;The language;
+	"video_name":"my_video"
+
+}
+```
+
+
+```powershell Response
+{
+  "data": {
+    "project_id": "<video_id>"
+  }
+}
+```
+
+</CodeGroup>
+
+<Note>
+  Callout Content.
+
+  We also have a feature that we don't recommend to use very often: adding a tag to the script to implement pause in the video editor. It allows you to silence your video for a set amount of time.
+
+  > Add a pause to the script with `<break time=\"2s\" />.`
+</Note>
+
+```powershell
+curl --location --request POST \
+--url  'https://api.jogg.ai/v1/create_video_with_template' \
+--header 'x-api-key: <your-API-key>' \
+--data '{
+ 	"template_id": 0,         // required；
+	"template_type": "user",  // required；Template type; default is "user";
+	"avatar_id": 0,           // required；Set the corresponding avatar ID;
+	"avatar_type": 0,         // required；Determine the source of the avatar, whether it is in a public library or created by an individual
+    "lang": "english",         // required;The language;
+    "video_name":"my_video",   
+	"variables": [
+      {
+        "type": "script",
+        "name": "script_en",
+        "properties": {
+        "content": "<break time=\"2s\" />"  // Add a pause 
+      }
+    }
+  ]
+}'
+```

@@ -1,0 +1,380 @@
+---
+title: "Video Translation"
+description: "Translate videos into 40+ languages with AI-powered voiceover and subtitles"
+---
+
+## Introduction
+
+Expand your video content to global audiences by translating videos into 40+ languages with natural-sounding AI voiceovers and synchronized subtitles. No need to re-record or hire translators.
+
+<CardGroup cols={2}>
+  <Card title="40+ Languages" icon="globe">
+    Support for major European, Asian, and other languages
+  </Card>
+  <Card title="AI Voiceover" icon="microphone">
+    Natural-sounding voices matching original tone
+  </Card>
+  <Card title="Auto Subtitles" icon="closed-captioning">
+    Synchronized subtitles generated automatically
+  </Card>
+  <Card title="Fast Processing" icon="bolt">
+    10-20 minutes average turnaround time
+  </Card>
+</CardGroup>
+
+---
+
+## Workflow Overview
+
+Video translation is a **3-step asynchronous process**:
+
+<Steps>
+<Step title="Submit Translation">
+  Submit your video URL and target language
+</Step>
+
+<Step title="Processing">
+  AI translates audio and generates voiceover (10-20 min)
+</Step>
+
+<Step title="Retrieve Result">
+  Get translated video and subtitle files
+</Step>
+</Steps>
+
+<Info>
+Processing time: 10-20 minutes for typical videos (varies by length)
+</Info>
+
+---
+
+## Quick Start
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/open/v2/video_translate/target_languages` | Get supported languages |
+| POST | `/open/v2/video_translate/` | Submit translation task |
+| GET | `/open/v2/video_translate/{translate_id}` | Check translation status |
+
+---
+
+### Step 1: Get Supported Languages
+
+List all available target languages:
+
+```bash
+curl --request GET \
+  --url 'https://api.jogg.ai/open/v2/video_translate/target_languages' \
+  --header 'x-api-key: YOUR_API_KEY'
+```
+
+**Response:**
+
+```json
+{
+  "code": 0,
+  "msg": "Success",
+  "data": {
+    "languages": [
+      {
+        "code": "es",
+        "name": "Spanish",
+        "native_name": "Español",
+        "voices": ["es-ES-AlvaroNeural", "es-ES-ElviraNeural"]
+      },
+      {
+        "code": "fr",
+        "name": "French",
+        "native_name": "Français",
+        "voices": ["fr-FR-HenriNeural", "fr-FR-DeniseNeural"]
+      }
+    ]
+  }
+}
+```
+
+---
+
+### Step 2: Submit Translation Task
+
+```bash
+curl --request POST \
+  --url 'https://api.jogg.ai/open/v2/video_translate/' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "video_url": "https://example.com/original-video.mp4",
+    "target_language": "es",
+    "voice_id": "es-ES-AlvaroNeural",
+    "enable_subtitles": true
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "code": 0,
+  "msg": "Success",
+  "data": {
+    "video_translate_id": "trans_abc123"
+  }
+}
+```
+
+<Check>
+Save the `video_translate_id` to check status later
+</Check>
+
+---
+
+### Step 3: Check Translation Status
+
+```bash
+curl --request GET \
+  --url 'https://api.jogg.ai/open/v2/video_translate/trans_abc123' \
+  --header 'x-api-key: YOUR_API_KEY'
+```
+
+**Response (Completed):**
+
+```json
+{
+  "code": 0,
+  "msg": "Success",
+  "data": {
+    "status": "completed",
+    "video_url": "https://res.jogg.ai/videos/translated_abc123.mp4",
+    "subtitle_url": "https://res.jogg.ai/subtitles/translated_abc123.srt",
+    "target_language": "es",
+    "duration": 120
+  }
+}
+```
+
+**Status Values:**
+
+| Status | Description | Action |
+|--------|-------------|--------|
+| `pending` | Task queued | Wait for processing |
+| `processing` | Translation in progress | Continue polling (every 10s) |
+| `completed` | Translation finished | Download video and subtitles |
+| `failed` | Translation failed | Check error message |
+
+---
+
+## Request Parameters
+
+### Required Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `video_url` | string | URL of the video to translate (must be accessible) |
+| `target_language` | string | Target language code (e.g., "es", "fr", "zh") |
+
+### Optional Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `voice_id` | string | Auto | Specific voice ID for target language |
+| `enable_subtitles` | boolean | `true` | Generate subtitle file (.srt) |
+| `subtitle_style` | string | `"default"` | Subtitle style: default/minimal/bold |
+
+---
+
+## Supported Languages
+
+**European Languages:**
+- English (en), Spanish (es), French (fr), German (de), Italian (it)
+- Portuguese (pt), Russian (ru), Polish (pl), Dutch (nl), Swedish (sv)
+
+**Asian Languages:**
+- Chinese (zh), Japanese (ja), Korean (ko), Thai (th), Vietnamese (vi)
+- Indonesian (id), Malay (ms), Hindi (hi), Filipino (fil)
+
+**Other Languages:**
+- Arabic (ar), Turkish (tr), Hebrew (he), and more...
+
+<Tip>
+Use the `/target_languages` endpoint to get the complete up-to-date list with available voices
+</Tip>
+
+---
+
+## Use Case Examples
+
+### E-commerce Product Videos
+
+Translate product demos for international markets:
+
+```bash
+curl --request POST \
+  --url 'https://api.jogg.ai/open/v2/video_translate/' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "video_url": "https://cdn.shop.com/product-demo-en.mp4",
+    "target_language": "es",
+    "voice_id": "es-ES-AlvaroNeural",
+    "enable_subtitles": true
+  }'
+```
+
+**Result:** Spanish version ready for Latin American market
+
+---
+
+### Educational Content
+
+Translate training videos for global teams:
+
+```bash
+# Translate to multiple languages
+for lang in es fr de ja zh; do
+  curl --request POST \
+    --url 'https://api.jogg.ai/open/v2/video_translate/' \
+    --header 'x-api-key: YOUR_API_KEY' \
+    --header 'Content-Type: application/json' \
+    --data "{
+      \"video_url\": \"https://training.example.com/onboarding.mp4\",
+      \"target_language\": \"$lang\",
+      \"enable_subtitles\": true
+    }"
+done
+```
+
+---
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Source Video Quality">
+    **Optimize your original video for best translation:**
+    
+    - **Clear Audio**: Minimize background noise and music
+    - **Speaking Pace**: Moderate speed (not too fast)
+    - **Pronunciation**: Standard accent, clear enunciation
+    - **Content**: Avoid complex jargon, idioms, or slang
+    - **Audio Track**: Ensure speech track is clear
+  </Accordion>
+  
+  <Accordion title="Voice Selection">
+    **Choose appropriate voices:**
+    
+    - Match gender and approximate age to original
+    - Consider formal vs casual tone
+    - Test different voices with short clips
+    - Use `/target_languages` to preview available voices
+    - Regional preferences (e.g., es-ES vs es-MX)
+  </Accordion>
+  
+  <Accordion title="Subtitle Usage">
+    **When to enable subtitles:**
+    
+    - ✅ Improves comprehension accuracy
+    - ✅ Helps viewers in noisy environments
+    - ✅ Accessibility for hearing impaired
+    - ✅ Aids language learning
+    - ✅ Can be customized with `subtitle_style`
+  </Accordion>
+  
+  <Accordion title="Batch Processing">
+    **For multiple translations:**
+    
+    - Submit all tasks at once (parallel processing)
+    - Use descriptive task tracking
+    - Implement webhook for completion notification
+    - Handle failures gracefully (retry logic)
+    - Monitor API rate limits
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Translation takes too long">
+    **Issue:** Processing exceeds expected time
+    
+    **Solutions:**
+    - Video length impacts processing time (2-5 min per minute of video)
+    - Verify video URL is publicly accessible
+    - Check video file size (very large files take longer)
+    - Check current API status for delays
+    - Use webhook to get notified when complete
+  </Accordion>
+  
+  <Accordion title="Poor voiceover quality">
+    **Issue:** Translated audio doesn't sound natural
+    
+    **Solutions:**
+    - Try different voice IDs for target language
+    - Ensure original audio is clear (low background noise)
+    - Check if original speech pace is too fast
+    - Enable subtitles for better context
+    - Test with high-quality source video first
+  </Accordion>
+  
+  <Accordion title="Video not accessible">
+    **Error:** `Video URL not accessible`
+    
+    **Solutions:**
+    - Ensure URL is publicly accessible (no authentication)
+    - Check CORS/download restrictions
+    - Verify video format is supported (MP4, MOV, AVI)
+    - Try uploading to a CDN first
+    - Check URL is not expired or temporary
+  </Accordion>
+  
+  <Accordion title="Translation inaccurate">
+    **Issue:** Translated content doesn't match original
+    
+    **Solutions:**
+    - Original audio may not be clear enough
+    - Check for heavy accents or dialects
+    - Avoid technical jargon or domain-specific terms
+    - Consider adding subtitles to original first
+    - Test with simpler, clearer speech
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Related Documentation
+
+<CardGroup cols={2}>
+  <Card
+    title="Get Voice List"
+    icon="microphone"
+    href="/api-reference/v2/Voice/GetVoiceList"
+  >
+    Browse all available voices
+  </Card>
+  
+  <Card
+    title="Webhook Integration"
+    icon="webhook"
+    href="/api-reference/v2/API Documentation/WebhookIntegration"
+  >
+    Get notified when translation completes
+  </Card>
+  
+  <Card
+    title="Get Result"
+    icon="circle-check"
+    href="/api-reference/v2/API Documentation/GetResult"
+  >
+    How to check task status
+  </Card>
+  
+  <Card
+    title="API Reference"
+    icon="code"
+    href="/api-reference/v2/Video/CreateVideoTranslation"
+  >
+    Complete API documentation
+  </Card>
+</CardGroup>

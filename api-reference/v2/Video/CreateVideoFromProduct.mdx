@@ -1,0 +1,32 @@
+---
+title: "Create Video from Product"
+openapi: "POST /open/v2/create_video_from_product"
+---
+
+Generate a product marketing video from product information. This endpoint creates videos with AI-generated scripts based on your product details.
+
+## Example Usage
+
+```bash
+curl -X POST 'https://api.jogg.ai/open/v2/create_video_from_product' \
+  -H 'x-api-key: YOUR_API_KEY' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "product_id": "prod_abc123",
+    "avatar_id": 127,
+    "voice_id": "en-US-ChristopherNeural",
+    "aspect_ratio": 1
+  }'
+```
+
+## Related Guides
+
+<CardGroup cols={2}>
+  <Card title="URL to Video Guide" href="/api-reference/v2/API Documentation/URLtoVideo">
+    Learn the complete product video workflow
+  </Card>
+  <Card title="Create Product" href="/api-reference/v2/Product/CreateProduct">
+    First create a product from URL
+  </Card>
+</CardGroup>
+

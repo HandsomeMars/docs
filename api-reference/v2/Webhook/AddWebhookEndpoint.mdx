@@ -1,0 +1,45 @@
+---
+title: "Add Webhook Endpoint"
+openapi: "POST /open/v2/endpoint"
+---
+
+创建新的 Webhook 端点以接收事件通知。
+
+您可以指定要订阅的事件类型并配置端点 URL。
+
+## 使用场景
+
+- 接收视频生成完成通知
+- 监控任务失败事件
+- 实时追踪 Avatar 创建状态
+- 集成第三方系统
+
+## 重要提示
+
+<Note>
+Webhook 端点必须能够接收 POST 请求，并返回 2xx 状态码以确认接收。
+</Note>
+
+<Warning>
+确保您的端点 URL 是公网可访问的 HTTPS 地址。
+</Warning>
+
+## 可用事件类型
+
+常见的事件类型包括：
+
+- `video.completed` - 视频生成完成
+- `video.failed` - 视频生成失败
+- `video.processing` - 视频处理中
+- `avatar.created` - Avatar 创建成功
+- `avatar.failed` - Avatar 创建失败
+
+<Tip>
+使用 [List Webhook Events](/api-reference/v2/Webhook/ListWebhookEvents) 端点获取所有可用的事件类型。
+</Tip>
+
+## Webhook 签名验证
+
+每个 Webhook 请求都包含签名，用于验证请求来源的真实性。使用返回的 `secret` 来验证签名。
+
+

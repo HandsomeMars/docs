@@ -1,386 +1,209 @@
-# JoggAI API Documentation
+# JoggAI API 文档
 
-Official API documentation for JoggAI - Create AI-powered videos effortlessly.
+JoggAI 视频 AI 平台 API 文档
 
-## 🚀 Quick Start
+---
 
-### Prerequisites
-
-- Node.js 20.17 or higher
-- npm or yarn
-
-### Installation
+## 基本命令
 
 ```bash
-# Install Mintlify CLI
-npm install -g mintlify
+# 安装 Mintlify
+npm i -g mintlify
 
-# Start development server
-cd docs
+# 本地预览
 mintlify dev
+
+# 访问: http://localhost:3000
 ```
 
-The documentation will be available at `http://localhost:3000`
+---
 
-## 📁 Project Structure
+## 项目结构
 
 ```
-docs/
+/docs
+├── README.md
+├── mint.json
+│
+├── home/                          # 首页文件
+│   ├── WelcometoJoggAI.mdx
+│   ├── KeyFeatures.mdx
+│   └── SeeJoggAIinAction.mdx
+│
 ├── api-reference/
-│   ├── joggai-introduction.mdx       # API overview
-│   ├── openapi-v2.yaml               # OpenAPI specification
-│   └── workflows/                    # Workflow guides
-│       ├── ai-scripts.mdx            # AI script generation
-│       ├── create-photo-avatar.mdx   # Photo avatar creation
-│       ├── create-video-from-product.mdx
-│       ├── create-video-from-template.mdx
-│       ├── video-translation.mdx
-│       ├── webhook-integration.mdx
-│       ├── avatar-videos/            # Avatar video workflows
-│       │   ├── avatar-videos-overview.mdx
-│       │   ├── avatar-videos-with-photo-avatar.mdx
-│       │   ├── avatar-videos-with-audio-source.mdx
-│       │   └── avatar-videos-transparent-background.mdx
-│       └── upload-media/             # Media upload workflows
-│           ├── upload-media-overview.mdx
-│           ├── upload-media-images.mdx
-│           ├── upload-media-videos.mdx
-│           └── upload-media-audio.mdx
-├── images/                           # Documentation images
-├── logo/                             # Brand assets
-│   ├── light.svg
-│   └── dark.svg
-├── docs.json                         # Mintlify configuration
-├── index.mdx                         # Homepage
-├── quickstart.mdx                    # Quick start guide
-└── README.md                         # This file
+│   ├── v1/                        # API v1（维护中）
+│   │   ├── QuickStart/
+│   │   ├── API Documentation/     (15个)
+│   │   ├── Video/Avatar/Voice/    (45+ endpoints)
+│   │   └── openapi.json
+│   │
+│   └── v2/                        # API v2（推荐）⭐
+│       ├── QuickStart/
+│       ├── API Documentation/     (14个教程)
+│       ├── Video/                 (7个)
+│       ├── Avatar/                (5个)
+│       ├── Voice/                 (2个)
+│       ├── Asset/                 (5个)
+│       ├── Template/              (3个)
+│       ├── Product/               (2个)
+│       ├── User/                  (2个)
+│       └── openapi-v2.yaml
+│
+├── images/                        # 文档图片 (23个)
+└── logo/                          # 品牌资源 (4个)
 ```
 
-## 📚 Documentation Sections
+---
 
-### API Documentation
+## 文件命名规范
 
-#### Getting Started
-- **JoggAI Introduction** - API overview and authentication
+### 文档文件
+```
+✅ 推荐: CreateAvatarVideo.mdx, GetUserInfo.mdx
+❌ 避免: create-avatar-video.mdx, 创建视频.mdx
+```
 
-#### Workflow Guides
-Core workflows with complete examples:
+### 特殊文件
+```
+README.md
+mint.json
+openapi-v2.yaml
+```
 
-- **AI Scripts** - Generate marketing scripts using AI
-- **Create Photo Avatar** - Create custom avatars from photos
-- **Create Video from Product** - Generate videos from product URLs
-- **Create Video from Template** - Use templates for quick video creation
-- **Video Translation** - Translate videos into 40+ languages
-- **Webhook Integration** - Set up webhooks for real-time notifications
+### 图片文件
+```
+✅ 推荐: api-key-guide.png, img_1.png
+❌ 避免: IMG_20231201.png, 截图1.png
+```
 
-#### Avatar Videos (Collapsible Group)
-- **Overview** - Introduction to avatar videos
-- **With Photo Avatar** - Use custom photo avatars
-- **With Audio Source** - Use your own audio files
-- **Transparent Background** - Create videos with alpha channel
+---
 
-#### Upload Media (Collapsible Group)
-- **Overview** - Media upload introduction
-- **Images** - Upload and manage images
-- **Videos** - Upload and manage videos
-- **Audio** - Upload and manage audio files
+## 文件组织原则
 
-### Auto-Generated API Reference
-Mintlify automatically generates interactive API documentation from `openapi-v2.yaml`:
-- 50+ endpoints organized by tags
-- Request/response schemas
-- Interactive playground
-- Code examples in bash/curl
+### 1. 按功能模块分类
+```
+api-reference/v2/
+├── Video/          # 视频相关
+├── Avatar/         # 头像相关
+└── Voice/          # 语音相关
+```
 
-## 🔧 Configuration
+### 2. 教程与 API 分离
+```
+api-reference/v2/
+├── API Documentation/  # 教程文档
+└── Video/              # API Endpoints
+```
 
-The documentation is configured in `docs.json`:
+### 3. 资源集中管理
+```
+/images/    # 所有图片
+/logo/      # 所有Logo
+```
 
-### Key Features
-- **Theme**: Blue color scheme (#2E5CFF)
-- **OpenAPI Integration**: Auto-generated API reference
-- **Navigation Groups**: Collapsible sections for complex workflows
-- **Tabs**: Primary tab (Home) + API Documentation tab
+---
 
-### Navigation Structure
+## 文档格式
+
+### Front Matter（必填）
+
+```markdown
+---
+title: "文档标题"
+description: "简短描述（不超过160字符）"
+---
+```
+
+### 标题层级
+
+```markdown
+# H1 - 页面主标题
+## H2 - 主要章节
+### H3 - 子章节
+#### H4 - 细分内容
+```
+
+---
+
+## 图片管理
+
+### 存放位置
+```
+/images/    # 文档图片
+/logo/      # Logo/品牌
+```
+
+### 引用方式
+```markdown
+![描述](/images/your-image.png)
+```
+
+---
+
+## 导航配置
+
+### mint.json 结构
 
 ```json
 {
   "navigation": [
     {
-      "group": "Workflow Guides",
+      "group": "组名",
       "pages": [
-        "api-reference/workflows/ai-scripts",
-        "api-reference/workflows/create-photo-avatar",
-        ...
-      ]
-    },
-    {
-      "group": "Create Avatar Videos",
-      "pages": [
-        "api-reference/workflows/avatar-videos/avatar-videos-overview",
-        ...
+        "path/to/page"
       ]
     }
   ]
 }
 ```
 
-## 📝 Writing Documentation
+### 路径规范
 
-### MDX Components
-
-This documentation uses Mintlify's MDX components:
-
-**Layout Components:**
-- `<Card>` - Feature cards with icons
-- `<CardGroup>` - Grid layout for cards (cols={2} or cols={3})
-- `<Steps>` - Step-by-step instructions
-- `<Step>` - Individual step within Steps
-
-**Content Components:**
-- `<Accordion>` - Collapsible content sections
-- `<AccordionGroup>` - Group of accordions
-- `<Note>`, `<Warning>`, `<Info>`, `<Tip>` - Callout boxes
-- `<Check>` - Success indicators
-
-**Code Display:**
-- `<Tabs>` / `<Tab>` - Tabbed content
-- Triple backticks with language for code blocks
-
-### MDX Best Practices
-
-#### ✅ Recommended
-
-**Use paragraph descriptions instead of lists in components:**
-```markdown
-<Accordion title="Problem">
-**Solution:** First do this. Then do that. Finally, complete the process.
-</Accordion>
+```json
+✅ "api-reference/v2/Video/CreateVideo"
+❌ "api-reference/v2/Video/CreateVideo.mdx"
+❌ "/api-reference/v2/Video/CreateVideo"
 ```
-
-**Add clear separation between text and lists:**
-```markdown
-<Step title="...">
-Complete these tasks.
-
-Required items:
-- Item 1
-- Item 2
-</Step>
-```
-
-#### ❌ Avoid
-
-**Don't use lists directly after colons in components:**
-```markdown
-<Accordion title="...">
-**Solutions:**
-- Item 1  <!-- This causes parsing errors -->
-</Accordion>
-```
-
-**Don't mix content without proper spacing:**
-```markdown
-<Step title="...">
-Do this:
-- Step 1  <!-- This causes parsing errors -->
-</Step>
-```
-
-### Code Examples
-
-All API code examples use bash/curl format:
-
-```bash
-curl --request POST \
-  --url 'https://api.jogg.ai/open/v2/create_video_from_avatar' \
-  --header 'x-api-key: YOUR_API_KEY' \
-  --header 'Content-Type: application/json' \
-  --data '{
-    "script": "Your video script here",
-    "avatar_id": 127,
-    "voice_id": "en-US-ChristopherNeural"
-  }'
-```
-
-### Mermaid Diagrams
-
-Use Mermaid for workflow visualization:
-
-````markdown
-```mermaid
-sequenceDiagram
-    participant Client
-    participant API
-    Client->>API: POST /create_video
-    API-->>Client: {video_id}
-```
-````
-
-## 🎨 Document Structure Guidelines
-
-### Workflow Documents
-
-Each workflow document follows this structure:
-
-1. **Introduction** - Overview and benefits (with CardGroup)
-2. **Workflow Overview** - Mermaid sequence diagram
-3. **Quick Start** - Simple example to get started
-4. **Complete Workflow** - Step-by-step guide (using Steps component)
-5. **Best Practices** - Tips and recommendations (using AccordionGroup)
-6. **Common Issues** - Troubleshooting (using AccordionGroup)
-7. **Next Steps** - Related documentation (using CardGroup)
-8. **Need Help?** - Support contact
-
-### Document Length Guidelines
-
-- **Simple workflows**: 200-300 lines
-- **Complex workflows**: 300-400 lines
-- **Overview documents**: 300-350 lines
-
-If a document exceeds 500 lines, consider splitting it into smaller, focused documents organized in a collapsible navigation group.
-
-## 🔗 Links
-
-- **Official Website**: https://jogg.ai
-- **API Dashboard**: https://app.jogg.ai
-- **API Base URL**: https://api.jogg.ai/open/v2
-- **Support Email**: support@jogg.ai
-- **Community**: https://discord.gg/RwrwZcSRCq
-
-## 📄 License
-
-See [LICENSE](LICENSE) file for details.
-
-## 🤝 Contributing
-
-### Documentation Updates
-
-1. Create a new branch for your changes
-2. Update relevant `.mdx` files
-3. Test locally with `mintlify dev`
-4. Ensure no parsing errors
-5. Submit for review
-
-### Adding New Workflow Guides
-
-1. Create `.mdx` file in `api-reference/workflows/`
-2. Follow the document structure guidelines above
-3. Add to `docs.json` navigation
-4. Test all internal links
-5. Verify in local preview
-
-## 🔄 Deployment
-
-This documentation is deployed with Mintlify.
-
-### Local Development
-
-```bash
-mintlify dev
-```
-
-### Production Deployment
-
-The documentation is automatically deployed when changes are pushed to the main branch.
-
-## 📦 API Specification
-
-The OpenAPI specification (`api-reference/openapi-v2.yaml`) defines:
-
-- **Endpoints**: 50+ API endpoints organized by tags
-- **Schemas**: Request/response data structures
-- **Authentication**: x-api-key header method
-- **Parameters**: Path, query, body parameters
-- **Examples**: Sample requests and responses
-
-### OpenAPI Tags
-
-Endpoints are organized by these tags:
-- `video` - Video creation and management
-- `avatar` - Avatar management
-- `voice` - Voice management
-- `template` - Template operations
-- `media` - Media upload and management
-- `webhook` - Webhook configuration
-- `translation` - Video translation
-- `script` - AI script generation
-
-## 🐛 Troubleshooting
-
-### Mintlify won't start
-
-**Error:** `mint dev is not supported on node versions below 20.17`
-
-**Solution:**
-```bash
-# Check Node.js version
-node --version
-
-# Upgrade Node.js using nvm
-nvm install 20.17
-nvm use 20.17
-```
-
-### MDX Parsing Errors
-
-**Error:** `Expected the closing tag </Accordion>`
-
-**Solution:** This usually occurs when lists are directly inside MDX components without proper spacing. Convert lists to paragraph descriptions or add clear separation.
-
-**Before:**
-```markdown
-<Accordion title="...">
-**Solutions:**
-- Item 1
-</Accordion>
-```
-
-**After:**
-```markdown
-<Accordion title="...">
-**Solutions:** First do this, then do that, and finally complete the process.
-</Accordion>
-```
-
-### Links Not Working
-
-**Issue:** Internal links returning 404
-
-**Solution:** 
-1. Use relative paths from the docs root
-2. For API Reference pages, use format: `/api-reference/{tag}/{endpoint-slug}`
-3. Clear browser cache with Cmd+Shift+R (Mac) or Ctrl+Shift+R (Windows)
-
-### Missing Pages in Navigation
-
-**Issue:** Page exists but doesn't show in navigation
-
-**Solution:** Ensure the page path in `docs.json` matches the actual file path without the `.mdx` extension.
-
-## 📊 Documentation Statistics
-
-- **Total Workflow Documents**: 14
-- **Collapsible Groups**: 2 (Avatar Videos, Upload Media)
-- **Average Document Length**: ~285 lines
-- **Code Examples**: bash/curl only
-- **Diagrams**: Mermaid sequence diagrams
-- **Languages Supported**: English
-
-## 📞 Support
-
-For technical support or questions:
-
-- **Email**: support@jogg.ai
-- **Discord**: https://discord.gg/RwrwZcSRCq
-- **Updates**: https://updates.jogg.ai
-
-When reporting issues:
-- Include your user ID (not API key)
-- Provide error messages and timestamps
-- Describe steps to reproduce
 
 ---
 
-Built with ❤️ by the JoggAI team
+## Git 提交规范
+
+```bash
+# 格式: <type>(<scope>): <subject>
+
+# type:
+- docs: 文档更新
+- feat: 新功能
+- fix: 修复错误
+- refactor: 重构
+
+# 示例:
+git commit -m "docs(v2): 添加视频翻译教程"
+git commit -m "fix(v1): 修复链接错误"
+git commit -m "feat(v2): 新增 API 文档"
+```
+
+---
+
+## 文档发布检查
+
+- [ ] Front Matter 完整
+- [ ] 标题层级正确
+- [ ] 链接使用相对路径
+- [ ] 图片路径规范
+- [ ] mint.json 已更新
+- [ ] 本地预览正常
+
+---
+
+## 版本管理
+
+| 版本 | 状态 | 维护策略 |
+|------|------|----------|
+| V1 | 维护中 | 兼容性支持 |
+| V2 | 主版本 | 功能更新 |
+
+---
+
+**在线文档:** [https://docs.jogg.ai](https://docs.jogg.ai)

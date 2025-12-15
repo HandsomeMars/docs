@@ -1,0 +1,281 @@
+---
+title: "Webhook Integration Guide"
+description: "How to receive notifications for various events through webhooks."
+---
+
+## Overview
+
+Jogg provides webhooks to notify your application about asynchronous events in real-time. When an event occurs (like video generation completion), we'll send an HTTP POST request to your configured endpoint with event details.
+
+## API Endpoints
+
+### List Webhook Endpoints
+
+Lists all webhook endpoints for the authenticated user.
+
+Please refer to the[ List of Webhook Endpoints ](/api-reference/v1/Webhook/ListofWebhookEndpoints)for more details.
+
+```bash
+curl --location --request GET 'https://api.jogg.ai/v1/webhook/endpoints' \
+--header 'x-api-key: <your-api-key>'
+```
+
+**Response**
+
+```json
+{
+  "data": [
+    {
+      "endpoint_id": "b1ac30a401234c96ad128303dfb431e2",
+      "url": "https://example.com/webhook",
+      "secret": "a1b2c3d4e5f6g7h8",
+      "status": "enabled",
+      "events": ["generated_video_success"],
+      "username": "jogg@gmail.com",
+      "created_at": 1703894400
+    }
+  ]
+}
+```
+
+### Add Webhook Endpoint
+
+Create a new webhook endpoint configuration. The system will automatically generate a 16-character secret key for signature verification.
+
+Please refer to the [Add a Webhook Endpoint](/api-reference/v1/Webhook/AddWebhookEndpoint) for more details.
+
+```bash
+curl --location --request POST 'https://api.jogg.ai/v1/webhook/endpoint' \
+--header 'x-api-key: <your-api-key>' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "url": "https://example.com/webhook",
+    "events": ["generated_video_success"],
+    "status": "enabled"
+}'
+```
+
+**Response**
+
+```json
+{
+    "endpoint_id": "b1ac30a401234c96ad128303dfb431e2",
+    "url": "https://example.com/webhook",
+    "secret": "a1b2c3d4e5f6g7h8",
+    "status": "enabled",
+    "events": ["generated_video_success"],
+    "username": "jogg@gmail.com",
+    "created_at": 1703894400
+}
+```
+
+### Update Webhook Endpoint
+
+Update an existing webhook endpoint configuration. Note that the secret key cannot be modified.
+
+Please refer to the [Update a Webhook Endpoint](/api-reference/v1/Webhook/UpdateWebhookEndpoint) for more details.
+
+```bash
+curl --location --request PUT 'https://api.jogg.ai/v1/webhook/endpoint/{endpoint_id}' \
+--header 'x-api-key: <your-api-key>' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "url": "https://example.com/webhook",
+    "events": ["generated_video_success"],
+    "status": "enabled"
+}'
+```
+
+### Delete Webhook Endpoint
+
+Delete an existing webhook endpoint.
+
+Please refer to the[ Delete a Webhook Endpoint](/api-reference/v1/Webhook/DeleteWebhookEndpoint) for more details.
+
+```bash
+curl --location --request DELETE 'https://api.jogg.ai/v1/webhook/endpoint/{endpoint_id}' \
+--header 'x-api-key: <your-api-key>'
+```
+
+### List Available Events
+
+Get a list of available webhook events.
+
+Please refer to the [List of Available Webhook Events](/api-reference/v1/Webhook/ListofAvailableWebhookEvents) for more details.
+
+```bash
+curl --location --request GET 'https://api.jogg.ai/v1/webhook/events' \
+--header 'x-api-key: <your-api-key>'
+```
+
+**Response**
+
+```json
+{
+  "data": [
+    "generated_video_success",
+    "generated_video_failed"
+  ]
+}
+```
+
+## Event Types
+
+### Video Generation Success
+
+Triggered when video generation completes successfully.
+
+**Payload**
+
+```json
+{
+  "event_id": "evt_123456789",
+  "event": "generated_video_success",
+  "timestamp": 1703894400,
+  "data": {
+    "project_id": "string",
+    "video_url": "string",
+    "duration": number
+  }
+}
+```
+
+### Video Generation Failed
+
+Triggered when video generation fails.
+
+**Payload**
+
+```json
+{
+  "event_id": "evt_123456789",
+  "event": "generated_video_failed",
+  "timestamp": 1703894400,
+  "data": {
+    "project_id": "string",
+    "error": {
+      "message": "string"
+    }
+  }
+}
+```
+
+## Security Implementation
+
+### Secret and Signature Verification
+
+When creating a webhook endpoint, the system automatically generates a 16-character secret key. This secret is used to sign webhook payloads, allowing you to verify that requests are coming from Jogg.
+
+1. All webhook URLs must use HTTPS
+
+2. Each webhook request is signed using HMAC SHA-256 with your secret key
+
+3. The signature is included in the `X-Webhook-Signature` header
+
+4. The signature is computed on the raw request body
+
+### Example Request Headers
+
+```http
+POST /webhook HTTP/1.1
+Host: your-domain.com
+Content-Type: application/json
+X-Webhook-Event: generated_video_success
+X-Webhook-Signature: 7256c87be255861cbbe92f4a04a4500176b045a287f258e32e5b6c6b96d7f290
+User-Agent: Jogg-Webhook/1.0
+```
+
+### Signature Verification Examples
+
+#### Go
+
+```go
+func VerifyWebhookSignature(payload []byte, signature, secret string) bool {
+    mac := hmac.New(sha256.New, []byte(secret))
+    mac.Write(payload)
+    expectedSignature := hex.EncodeToString(mac.Sum(nil))
+    return hmac.Equal([]byte(signature), []byte(expectedSignature))
+}
+```
+
+#### Python
+
+```python
+import hmac
+import hashlib
+
+def verify_webhook_signature(payload, signature, secret):
+    expected = hmac.new(
+        secret.encode('utf-8'),
+        payload,
+        hashlib.sha256
+    ).hexdigest()
+    return hmac.compare_digest(signature, expected)
+```
+
+#### Node.js
+
+```javascript
+const crypto = require('crypto');
+
+function verifyWebhookSignature(payload, signature, secret) {
+    const expected = crypto
+        .createHmac('sha256', secret)
+        .update(payload)
+        .digest('hex');
+    return crypto.timingSafeEqual(
+        Buffer.from(signature),
+        Buffer.from(expected)
+    );
+}
+```
+
+## Best Practices
+
+### Security
+
+1. Keep your webhook secret secure and never expose it
+
+2. Always verify signatures before processing webhooks
+
+3. Use HTTPS endpoints only
+
+4. Implement request timeout (recommended: 10s)
+
+5. Use constant-time string comparison for signature verification
+
+6. Store webhook logs for security auditing
+
+### Implementation
+
+1. Process webhooks asynchronously
+
+2. Return 2xx status quickly, process later
+
+3. Implement idempotency using event\_id
+
+4. Store webhook logs for debugging
+
+5. Monitor webhook delivery status
+
+## Error Handling
+
+### Retry Mechanism
+
+* Non-2xx responses trigger retries
+
+* Maximum 3 retry attempts
+
+* 5 second delay between retries
+
+* Only 2xx responses are considered successful
+
+### Monitoring
+
+* Monitor webhook logs for delivery issues
+
+* Track retry counts and failure rates
+
+* Set up alerts for repeated failures
+
+* Consider implementing a manual retry mechanism

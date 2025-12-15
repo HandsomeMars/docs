@@ -1,0 +1,722 @@
+{
+
+    "openapi": "3.0.1",
+
+    "info": {
+
+        "title": "OpenAPI Render API",
+
+        "description": "A sample API that demonstrates features in the OpenAPI specification",
+
+        "license": {
+
+            "name": "MIT"
+
+        },
+
+        "version": "1.0.0"
+
+    },
+
+    "servers": [
+
+        {
+
+            "url": "https://api-services.jogg.ai"
+
+        }
+
+    ],
+
+    "security": [
+
+        {
+
+            "apiKeyAuth": []
+
+        }
+
+    ],
+
+    "paths": {
+
+        "/open/render": {
+
+            "post": {
+
+                "description": "Renders a template with specified variables",
+
+                "requestBody": {
+
+                    "content": {
+
+                        "application/json": {
+
+                            "schema": {
+
+                                "type": "object",
+
+                                "properties": {
+
+                                    "text": {
+
+                                        "type": "string",
+
+                                        "example": "default"
+
+                                    },
+
+                                    "lang": {
+
+                                        "type": "string",
+
+                                        "example": "english"
+
+                                    },
+
+                                    "template_id": {
+
+                                        "type": "integer",
+
+                                        "example": 96
+
+                                    },
+
+                                    "template_type": {
+
+                                        "type": "string",
+
+                                        "example": "user"
+
+                                    },
+
+                                    "dp_id": {
+
+                                        "type": "integer",
+
+                                        "example": 0
+
+                                    },
+
+                                    "timbre_td": {
+
+                                        "type": "integer",
+
+                                        "example": 0
+
+                                    },
+
+                                    "without_tts": {
+
+                                        "type": "integer",
+
+                                        "example": 1
+
+                                    },
+
+                                    "variables": {
+
+                                        "type": "array",
+
+                                        "items": {
+
+                                            "type": "object",
+
+                                            "properties": {
+
+                                                "name": {
+
+                                                    "type": "string"
+
+                                                },
+
+                                                "type": {
+
+                                                    "type": "string"
+
+                                                },
+
+                                                "properties": {
+
+                                                    "type": "object",
+
+                                                    "additionalProperties": true
+
+                                                }
+
+                                            }
+
+                                        }
+
+                                    }
+
+                                },
+
+                                "required": [
+
+                                    "text",
+
+                                    "lang",
+
+                                    "template_id",
+
+                                    "template_type",
+
+                                    "variables"
+
+                                ]
+
+                            }
+
+                        }
+
+                    },
+
+                    "required": true
+
+                },
+
+                "responses": {
+
+                    "200": {
+
+                        "description": "Successful render response",
+
+                        "content": {
+
+                            "application/json": {
+
+                                "schema": {
+
+                                    "type": "object",
+
+                                    "properties": {
+
+                                        "code": {
+
+                                            "type": "integer",
+
+                                            "description": "Response code. Normally 0."
+
+                                        },
+
+                                        "msg": {
+
+                                            "type": "string",
+
+                                            "description": "Response message"
+
+                                        },
+
+                                        "data": {
+
+                                            "type": "object",
+
+                                            "properties": {
+
+                                                "prj_id": {
+
+                                                    "type": "string",
+
+                                                    "description": "Project ID, used for querying synthesis status via the prj_info endpoint."
+
+                                                }
+
+                                            }
+
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    },
+
+                    "400": {
+
+                        "description": "Error in request",
+
+                        "content": {
+
+                            "application/json": {
+
+                                "schema": {
+
+                                    "$ref": "#/components/schemas/Error"
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        },
+
+        "/open/upload/sign": {
+
+            "post": {
+
+                "summary": "Get Signed URL",
+
+                "description": "Generate a signed URL for file upload. Use the `sign_url` obtained here to upload your file.",
+
+                "requestBody": {
+
+                    "description": "Data required for file upload",
+
+                    "content": {
+
+                        "application/json": {
+
+                            "schema": {
+
+                                "type": "object",
+
+                                "properties": {
+
+                                    "filetype": {
+
+                                        "type": "string",
+
+                                        "example": "image/jpeg"
+
+                                    },
+
+                                    "filename": {
+
+                                        "type": "string",
+
+                                        "example": "1.jpg"
+
+                                    },
+
+                                    "use_to": {
+
+                                        "type": "string",
+
+                                        "example": "media"
+
+                                    }
+
+                                },
+
+                                "required": [
+
+                                    "filetype",
+
+                                    "filename",
+
+                                    "use_to"
+
+                                ]
+
+                            }
+
+                        }
+
+                    },
+
+                    "required": true
+
+                },
+
+                "responses": {
+
+                    "200": {
+
+                        "description": "Successful response",
+
+                        "content": {
+
+                            "application/json": {
+
+                                "schema": {
+
+                                    "type": "object",
+
+                                    "properties": {
+
+                                        "sign_url": {
+
+                                            "type": "string",
+
+                                            "description": "Use the sign_url to upload your file with a PUT request, including the file data in the request body. This is a direct upload to the signed URL."
+
+                                        },
+
+                                        "full_path": {
+
+                                            "type": "string",
+
+                                            "description": "URL after file upload"
+
+                                        },
+
+                                        "key": {
+
+                                            "type": "string",
+
+                                            "description": "Relative path after file upload"
+
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        },
+
+        "/open/prj_info": {
+
+            "get": {
+
+                "summary": "Get Project Information",
+
+                "description": "Retrieve information about a specific project using its ID.",
+
+                "parameters": [
+
+                    {
+
+                        "name": "project_id",
+
+                        "in": "query",
+
+                        "required": true,
+
+                        "schema": {
+
+                            "type": "string"
+
+                        },
+
+                        "description": "The ID of the project to retrieve information for."
+
+                    }
+
+                ],
+
+                "responses": {
+
+                    "200": {
+
+                        "description": "Project information retrieved successfully",
+
+                        "content": {
+
+                            "application/json": {
+
+                                "schema": {
+
+                                    "type": "object",
+
+                                    "properties": {
+
+                                        "code": {
+
+                                            "type": "integer",
+
+                                            "description": "Response code"
+
+                                        },
+
+                                        "msg": {
+
+                                            "type": "string",
+
+                                            "description": "Response message"
+
+                                        },
+
+                                        "data": {
+
+                                            "type": "object",
+
+                                            "properties": {
+
+                                                "id": {
+
+                                                    "type": "string",
+
+                                                    "description": "Project ID"
+
+                                                },
+
+                                                "title": {
+
+                                                    "type": "string",
+
+                                                    "description": "Project title"
+
+                                                },
+
+                                                "progress": {
+
+                                                    "type": "integer",
+
+                                                    "description": "Progress percentage"
+
+                                                },
+
+                                                "progress_desc": {
+
+                                                    "type": "string",
+
+                                                    "description": "Description of current progress"
+
+                                                },
+
+                                                "aspect_ratio": {
+
+                                                    "type": "integer",
+
+                                                    "description": "Aspect ratio"
+
+                                                },
+
+                                                "step": {
+
+                                                    "type": "integer",
+
+                                                    "description": "Current step"
+
+                                                },
+
+                                                "status": {
+
+                                                    "type": "integer",
+
+                                                    "description": "Current status"
+
+                                                },
+
+                                                "err_msg": {
+
+                                                    "type": "string",
+
+                                                    "description": "Error message, if any"
+
+                                                },
+
+                                                "video_path": {
+
+                                                    "type": "string",
+
+                                                    "description": "Path to the video output"
+
+                                                },
+
+                                                "video_duration": {
+
+                                                    "type": "integer",
+
+                                                    "description": "Video duration in seconds"
+
+                                                },
+
+                                                "video_url": {
+
+                                                    "type": "string",
+
+                                                    "description": "URL to the video output"
+
+                                                },
+
+                                                "cover_path": {
+
+                                                    "type": "string",
+
+                                                    "description": "Path to the cover image"
+
+                                                },
+
+                                                "cover_url": {
+
+                                                    "type": "string",
+
+                                                    "description": "URL to the cover image"
+
+                                                },
+
+                                                "workspace_index": {
+
+                                                    "type": "integer",
+
+                                                    "description": "Workspace index used"
+
+                                                },
+
+                                                "template_id": {
+
+                                                    "type": "integer",
+
+                                                    "description": "Template ID"
+
+                                                },
+
+                                                "template_type": {
+
+                                                    "type": "string",
+
+                                                    "description": "Template type ('common', 'user', etc.)"
+
+                                                },
+
+                                                "index_template_id": {
+
+                                                    "type": "integer",
+
+                                                    "description": "Index template ID"
+
+                                                },
+
+                                                "person_id": {
+
+                                                    "type": "integer",
+
+                                                    "description": "Person ID"
+
+                                                },
+
+                                                "placeholder_cover_url": {
+
+                                                    "type": "string",
+
+                                                    "description": "Placeholder cover image URL"
+
+                                                },
+
+                                                "created_at": {
+
+                                                    "type": "integer",
+
+                                                    "description": "Creation timestamp"
+
+                                                },
+
+                                                "updated_at": {
+
+                                                    "type": "integer",
+
+                                                    "description": "Last update timestamp"
+
+                                                }
+
+                                            }
+
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    },
+
+                    "400": {
+
+                        "description": "Invalid project ID",
+
+                        "content": {
+
+                            "application/json": {
+
+                                "schema": {
+
+                                    "$ref": "#/components/schemas/Error"
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    },
+
+    "components": {
+
+        "schemas": {
+
+            "Error": {
+
+                "required": [
+
+                    "error",
+
+                    "message"
+
+                ],
+
+                "type": "object",
+
+                "properties": {
+
+                    "error": {
+
+                        "type": "integer",
+
+                        "format": "int32"
+
+                    },
+
+                    "message": {
+
+                        "type": "string"
+
+                    }
+
+                }
+
+            }
+
+        },
+
+        "securitySchemes": {
+
+            "apiKeyAuth": {
+
+                "type": "apiKey",
+
+                "in": "header",
+
+                "name": "x-api-key"
+
+            }
+
+        }
+
+    }
+
+}
+

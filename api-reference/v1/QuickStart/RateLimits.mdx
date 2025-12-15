@@ -1,0 +1,173 @@
+---
+title: "Rate Limits"
+description: "Understanding API rate limits and usage quotas"
+---
+
+## Overview
+
+Rate limits ensure fair usage and service quality for all users. Limits are applied per API key and vary by subscription plan.
+
+<Info>
+Rate limits reset every 60 seconds.
+</Info>
+
+---
+
+## Current Rate Limits
+
+| Limit Type | Free Plan | Pro Plan | Enterprise |
+|------------|-----------|----------|------------|
+| **Requests/minute** | 20 | 60 | 300 |
+| **Burst requests** | 30 | 100 | 500 |
+| **Concurrent videos** | 2 | 10 | 50 |
+| **Webhooks/minute** | 10 | 30 | 100 |
+
+<Note>
+Enterprise plans can request custom rate limits. Contact [sales@jogg.ai](mailto:sales@jogg.ai).
+</Note>
+
+---
+
+## Rate Limit Headers
+
+Every API response includes rate limit information:
+
+| Header | Description |
+|--------|-------------|
+| `X-RateLimit-Limit` | Maximum requests per minute |
+| `X-RateLimit-Remaining` | Requests remaining in current window |
+| `X-RateLimit-Reset` | Unix timestamp when limit resets |
+| `X-RateLimit-Type` | Type of limit applied |
+
+---
+
+## Rate Limit Exceeded
+
+When you exceed the rate limit, you'll receive HTTP status `429`:
+
+```json
+{
+  "code": 10401,
+  "msg": "Rate limit exceeded. Please try again later.",
+  "data": {
+    "retryAfter": 30,
+    "limit": 60,
+    "current": 61
+  }
+}
+```
+
+---
+
+## Handling Strategies
+
+<AccordionGroup>
+  <Accordion title="Exponential Backoff">
+    When rate limited, wait progressively longer before retrying:
+    - 1st retry: wait 2 seconds
+    - 2nd retry: wait 4 seconds
+    - 3rd retry: wait 8 seconds
+  </Accordion>
+  
+  <Accordion title="Monitor Usage">
+    Check `X-RateLimit-Remaining` header before making requests.
+    If below threshold, slow down request rate.
+  </Accordion>
+  
+  <Accordion title="Request Queuing">
+    Queue requests and process them at a controlled rate to avoid hitting limits.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Cache Responses" icon="database">
+    Cache frequently accessed data to reduce API calls
+  </Card>
+  
+  <Card title="Use Webhooks" icon="webhook">
+    Use webhooks instead of polling for status updates
+  </Card>
+  
+  <Card title="Batch Requests" icon="layer-group">
+    Group multiple operations where supported
+  </Card>
+  
+  <Card title="Monitor Usage" icon="chart-line">
+    Track API usage patterns to optimize calls
+  </Card>
+</CardGroup>
+
+---
+
+## Endpoint-Specific Limits
+
+Some endpoints have additional limits:
+
+| Endpoint | Limit | Window |
+|----------|-------|--------|
+| `/product` | 30 requests | Per minute |
+| `/videos` | 10 concurrent | At any time |
+| `/ai-scripts` | 20 requests | Per minute |
+| `/upload` | 5 GB | Per day |
+
+---
+
+## Upgrading Limits
+
+<CardGroup cols={2}>
+  <Card title="Upgrade Plan" icon="arrow-up" href="https://jogg.ai/pricing">
+    Get higher limits with Pro or Enterprise plans
+  </Card>
+  
+  <Card title="Contact Sales" icon="phone" href="mailto:sales@jogg.ai">
+    Need custom limits? Contact our sales team
+  </Card>
+</CardGroup>
+
+---
+
+## Common Issues
+
+<AccordionGroup>
+  <Accordion title="Hitting Limits Unexpectedly">
+    **Possible Causes:**
+    - Multiple systems using same API key
+    - Polling instead of webhooks
+    - No caching implemented
+    
+    **Solutions:**
+    - Use separate API keys per system
+    - Implement webhooks for async operations
+    - Cache frequently accessed data
+  </Accordion>
+  
+  <Accordion title="Rate Limits Not Resetting">
+    **Possible Causes:**
+    - Misunderstanding reset window
+    - Time zone confusion
+    
+    **Solutions:**
+    - Check `X-RateLimit-Reset` header (Unix timestamp in UTC)
+    - Implement proper time handling
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Need Help?
+
+If you're experiencing rate limit issues:
+
+1. Check current usage in the [Dashboard](https://app.jogg.ai)
+2. Review rate limit headers in responses
+3. Implement handling strategies above
+4. Contact [support@jogg.ai](mailto:support@jogg.ai)
+
+<Tip>
+Set up alerts when reaching 80% of your rate limit to prevent service interruptions.
+</Tip>
+

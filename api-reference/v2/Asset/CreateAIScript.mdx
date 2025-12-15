@@ -1,0 +1,33 @@
+---
+title: "Create AI Script"
+openapi: "POST /open/v2/ai_scripts"
+---
+
+Generate AI-powered video scripts based on product information. The AI will create multiple script variations optimized for your video duration.
+
+## Example Usage
+
+```bash
+curl --request POST \
+  --url 'https://api.jogg.ai/open/v2/ai_scripts' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "name": "Amazing Smart Watch",
+    "description": "A smartwatch with health tracking",
+    "video_length": "30",
+    "language": "english"
+  }'
+```
+
+## Related Guides
+
+<CardGroup cols={2}>
+  <Card title="AI Scripts Guide" href="/api-reference/v2/API Documentation/AIScripts">
+    Learn the complete AI scripts workflow
+  </Card>
+  <Card title="Get Script Results" href="/api-reference/v2/Asset/GetAIScriptResult">
+    Retrieve generated scripts
+  </Card>
+</CardGroup>
+

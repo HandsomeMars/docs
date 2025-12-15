@@ -1,0 +1,20 @@
+---
+title: "Get Voices"
+openapi: "GET /open/v2/voices"
+---
+
+Retrieve the list of available voices for text-to-speech. JoggAI offers natural-sounding voices in 40+ languages.
+
+## Example Usage
+
+```bash
+curl --request GET \
+  --url 'https://api.jogg.ai/open/v2/voices' \
+  --header 'x-api-key: YOUR_API_KEY'
+```
+
+## Query Parameters
+
+- `language` - Filter by language code (e.g., "en-US")
+- `gender` - Filter by gender ("Male" or "Female")
+

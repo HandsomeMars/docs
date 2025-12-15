@@ -1,0 +1,232 @@
+---
+title: "Avatar Videos with Custom Audio"
+description: "Use your own audio file instead of text-to-speech"
+---
+
+## Overview
+
+Use your own audio recordings instead of text-to-speech for complete control over voice, timing, and delivery. Perfect for professional voice-overs, branded audio, or languages not supported by TTS.
+
+<Info>
+**Specialized Scenario:** This guide focuses on using custom audio files. For the complete avatar video creation guide, see [Create Avatar Videos](/api-reference/v2/API Documentation/CreateAvatarVideos).
+</Info>
+
+---
+
+## When to Use Custom Audio
+
+**Best for:**
+- Professional voice-over recordings
+- Branded voice or specific talent
+- Dialects not supported by TTS
+- Music or sound effects
+- Pre-recorded audio content
+
+**Use TTS instead when:**
+- You need quick generation
+- You want easy script updates
+- You need multiple languages from same script
+
+---
+
+## Quick Example
+
+### Step 1: Upload Audio
+
+First, upload your audio file:
+
+```bash
+curl --request POST \
+  --url 'https://api.jogg.ai/open/v2/upload/asset' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'Content-Type: multipart/form-data' \
+  --form 'file=@/path/to/audio.mp3' \
+  --form 'asset_type=audio' \
+  --form 'name=My Voice Recording'
+```
+
+**Response:**
+
+```json
+{
+  "code": 0,
+  "msg": "Success",
+  "data": {
+    "asset_id": "aud_abc123",
+    "asset_url": "https://res.jogg.ai/assets/aud_abc123.mp3",
+    "duration": 45
+  }
+}
+```
+
+<Check>
+Save the `asset_id` for video creation
+</Check>
+
+---
+
+### Step 2: Create Video with Audio
+
+Use the audio file instead of script:
+
+```bash
+curl --request POST \
+  --url 'https://api.jogg.ai/open/v2/create_video_from_avatar' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "avatar_id": 81,
+    "avatar_type": 0,
+    "audio_url": "https://res.jogg.ai/assets/aud_abc123.mp3",
+    "aspect_ratio": "portrait",
+    "screen_style": 1,
+    "caption": false
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "code": 0,
+  "msg": "Success",
+  "data": {
+    "video_id": "video_123456"
+  }
+}
+```
+
+<Warning>
+**Important:** When using `audio_url`, do NOT include `script` or `voice_id` parameters. They are mutually exclusive.
+</Warning>
+
+---
+
+## Key Parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `audio_url` | ✅ | URL of uploaded audio file (replaces `script`) |
+| `avatar_id` | ✅ | Avatar ID |
+| `avatar_type` | ✅ | 0=Public, 1=Custom |
+| `aspect_ratio` | ✅ | portrait/landscape/square |
+| `screen_style` | ✅ | 1=Background, 2=Green screen, 3=WebM |
+| `caption` | ❌ | Enable subtitles (usually false with custom audio) |
+
+**Do NOT use together:**
+- ❌ `audio_url` + `script` (choose one)
+- ❌ `audio_url` + `voice_id` (voice_id only works with script)
+
+---
+
+## Audio Requirements
+
+**Supported Formats:**
+- MP3 (recommended)
+- WAV
+- M4A
+
+**Specifications:**
+- Max size: 20MB
+- Max duration: 10 minutes
+- Recommended bitrate: 192 kbps for music, 128 kbps for voice
+- Sample rate: 44.1 kHz
+
+**Quality Tips:**
+```bash
+# Optimize audio with FFmpeg
+ffmpeg -i input.wav -codec:a libmp3lame -b:a 192k output.mp3
+
+# Normalize audio levels
+ffmpeg -i input.mp3 -filter:a loudnorm output.mp3
+```
+
+---
+
+## Common Use Cases
+
+<AccordionGroup>
+  <Accordion title="Professional Voice-Overs">
+    Use recordings from professional voice talent:
+    - Record in professional studio
+    - Upload final edited audio
+    - Create videos with consistent voice
+  </Accordion>
+  
+  <Accordion title="Brand Voice">
+    Maintain branded audio across videos:
+    - Use company spokesperson voice
+    - Record once, use in multiple videos
+    - Consistent brand audio identity
+  </Accordion>
+  
+  <Accordion title="Multiple Takes">
+    Use best take from multiple recordings:
+    - Record several versions
+    - Upload the best performance
+    - Edit audio before uploading
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Video length doesn't match audio">
+    **Issue:** Video too short or too long for audio
+    
+    **Solution:**
+    - Avatar video length matches audio duration automatically
+    - Ensure audio is clean (no long silence at start/end)
+    - Trim audio to desired length before upload
+  </Accordion>
+  
+  <Accordion title="Audio not playing">
+    **Error:** `Audio file not accessible`
+    
+    **Solution:**
+    - Use the `asset_url` from upload response
+    - Ensure URL is publicly accessible
+    - Check audio file format is supported
+  </Accordion>
+  
+  <Accordion title="Lip sync issues">
+    **Issue:** Avatar lips don't match audio
+    
+    **Solution:**
+    - Use clear speech audio (not music)
+    - Ensure audio quality is good
+    - Check audio language matches avatar capabilities
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Related Documentation
+
+<CardGroup cols={2}>
+  <Card
+    title="Create Avatar Videos"
+    icon="user"
+    href="/api-reference/v2/API Documentation/CreateAvatarVideos"
+  >
+    Main avatar video guide
+  </Card>
+  
+  <Card
+    title="Upload Media"
+    icon="upload"
+    href="/api-reference/v2/API Documentation/UploadMedia"
+  >
+    Upload audio files
+  </Card>
+  
+  <Card
+    title="API Reference"
+    icon="code"
+    href="/api-reference/v2/Video/CreateVideoFromAvatar"
+  >
+    Complete API documentation
+  </Card>
+</CardGroup>

@@ -1,0 +1,23 @@
+---
+title: "Get Avatar Video Status"
+openapi: "GET /open/v2/avatar_video/{id}"
+---
+
+Retrieve the status and details of an avatar video by its project ID. Use this endpoint to check if video generation is complete and get the video URL.
+
+## Example Usage
+
+```bash
+curl --request GET \
+  --url 'https://api.jogg.ai/open/v2/avatar_video/vid_abc123' \
+  --header 'x-api-key: YOUR_API_KEY'
+```
+
+## Related Guides
+
+<CardGroup cols={2}>
+  <Card title="Create Avatar Videos Guide" href="/api-reference/v2/API Documentation/CreateAvatarVideos">
+    Learn how to create avatar videos
+  </Card>
+</CardGroup>
+

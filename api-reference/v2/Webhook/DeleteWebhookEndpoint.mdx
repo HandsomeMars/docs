@@ -1,0 +1,26 @@
+---
+title: "Delete Webhook Endpoint"
+openapi: "DELETE /open/v2/endpoint/{endpoint_id}"
+---
+
+从您的账户中删除 Webhook 端点。
+
+此操作无法撤销，端点将立即停止接收事件。
+
+## 使用场景
+
+- 移除不再需要的 Webhook
+- 清理失效的端点
+- 停止事件通知
+
+## 重要提示
+
+<Warning>
+删除 Webhook 端点后无法恢复，所有关联的事件订阅都将被移除。
+</Warning>
+
+<Info>
+如果只是暂时不需要接收事件，建议使用 [Update Webhook Endpoint](/api-reference/v2/Webhook/UpdateWebhookEndpoint) 将状态设置为 `disabled`，而不是删除端点。
+</Info>
+
+

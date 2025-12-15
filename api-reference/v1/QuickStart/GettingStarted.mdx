@@ -1,0 +1,101 @@
+---
+title: "Getting Started"
+description: "Quick start guide for JoggAI API v1"
+---
+
+## Welcome to JoggAI API v1
+
+The JoggAI API unlocks new possibilities, enabling you to effortlessly create dynamic avatar videos and seamlessly integrate JoggAI's advanced AI features into your product.
+
+<CardGroup cols={3}>
+  <Card title="Create Account" icon="user-plus" href="#create-account">
+    Sign up and get your API key
+  </Card>
+  <Card title="Error Handling" icon="triangle-exclamation" href="/api-reference/v1/QuickStart/ErrorHandling">
+    Understand error codes
+  </Card>
+  <Card title="Rate Limits" icon="gauge" href="/api-reference/v1/QuickStart/RateLimits">
+    Manage API usage
+  </Card>
+</CardGroup>
+
+---
+
+## Create Account
+
+Sign up to create an account at https://app.jogg.ai/register to access JoggAI's API capabilities.
+
+---
+
+## Get API Key
+
+1. Click your avatar in the dashboard
+2. Click 'API'
+
+![](/images/img01.png)
+
+3. Copy your API Key
+
+![](/images/APIKey.png)
+
+---
+
+## API Credit Consumption
+
+<Tip>
+**Video Generation:**
+- 1 credit per 2 minutes of video
+- Less than 2 minutes = 1 credit
+
+**Preview Video:**
+- 0.5 credit per 2 minutes
+- Less than 2 minutes = 0.5 credit
+
+**AI Scripts:**
+- 0.2 credit per API call
+
+**Image Generation:**
+- 0.05 credit per image
+- 0.2 credit per call (4 images)
+
+**Motion Generation:**
+- Motion 1.0: 2 credits
+- Motion 2.0: 2 credits
+- Motion 2.0 Pro: 3 credits
+</Tip>
+
+---
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Check Response Codes" icon="check">
+    Always verify the `code` field in responses
+  </Card>
+  
+  <Card title="Implement Retry Logic" icon="rotate">
+    Use exponential backoff for retries
+  </Card>
+  
+  <Card title="Cache Responses" icon="database">
+    Cache frequently accessed data
+  </Card>
+  
+  <Card title="Use Webhooks" icon="webhook">
+    Avoid polling, use webhooks
+  </Card>
+</CardGroup>
+
+---
+
+## Need Help?
+
+For questions or issues:
+
+- **Email:** [support@jogg.ai](mailto:support@jogg.ai)
+- **Dashboard:** [app.jogg.ai](https://app.jogg.ai)
+- **Documentation:** Explore [Error Handling](/api-reference/v1/QuickStart/ErrorHandling) and [Rate Limits](/api-reference/v1/QuickStart/RateLimits)
+
+<Note>
+Include your user ID (not API key) when contacting support.
+</Note>

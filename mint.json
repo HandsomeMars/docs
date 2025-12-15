@@ -1,0 +1,172 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "JoggAI API",
+  "logo": {
+    "dark": "/logo/Dark-logo.png",
+    "light": "/logo/Group 1312320557.png"
+  },
+  "favicon": "/logo/Group 1312319951.png",
+  "theme": "prism",
+  "colors": {
+    "primary": "#2E5CFF",
+    "light": "#2E5CFF",
+    "dark": "#2E5CFF",
+    "anchors": {
+      "from": "#0D9373",
+      "to": "#07C983"
+    }
+  },
+  "topbarLinks": [
+    {
+      "name": "Support",
+      "url": "mailto:support@jogg.ai"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Get Started",
+    "url": "https://app.jogg.ai/"  },
+  "tabs": [
+    {
+      "name": "API Documentation",
+      "url": "api-reference/v2"
+    }
+  ],
+  "primaryTab": {
+    "name": "Home"
+},
+  "anchors": [
+    {
+        "name": "Roadmap",
+        "icon": "pencil",
+        "url": "https://updates.jogg.ai/roadmap"
+    },
+    {
+        "name": "Changelog",
+        "icon": "code",
+        "url": "https://updates.jogg.ai/changelog"
+    },
+    {
+        "name": "Share Your Ideas",
+        "icon": "envelope",
+        "url": "https://updates.jogg.ai/"
+    }
+],
+  "navigation": [
+    {
+      "group": "Get Started",
+      "pages": [
+        "home/WelcometoJoggAI",
+        "home/KeyFeatures",
+        "home/SeeJoggAIinAction"
+      ]
+    },
+    {
+      "group": "QuickStart",
+      "pages": [
+        "api-reference/v2/QuickStart/GettingStarted",
+        "api-reference/v2/QuickStart/ErrorHandling",
+        "api-reference/v2/QuickStart/RateLimits"
+      ]
+    },
+    {
+      "group": "Workflows Guides",
+      "pages": [
+        {
+          "group": "Create Avatar Videos",
+          "pages": [
+            "api-reference/v2/API Documentation/CreateAvatarVideos",
+            "api-reference/v2/API Documentation/AvatarVideosWithPhotoAvatar",
+            "api-reference/v2/API Documentation/AvatarVideosTransparentBackground",
+            "api-reference/v2/API Documentation/AvatarVideosWithAudioSource"
+          ]
+        },
+        "api-reference/v2/API Documentation/URLtoVideo",
+        "api-reference/v2/API Documentation/CreateVideoFromTemplate",
+        "api-reference/v2/API Documentation/VideoTranslation",
+        "api-reference/v2/API Documentation/CreatePhotoAvatar",
+        "api-reference/v2/API Documentation/UploadMedia",
+        "api-reference/v2/API Documentation/AIScripts",
+        "api-reference/v2/API Documentation/WebhookIntegration",
+        "api-reference/v2/API Documentation/GetResult"
+      ]
+    },
+    {
+      "group": "Video",
+      "pages": [
+        "api-reference/v2/Video/CreateVideoFromAvatar",
+        "api-reference/v2/Video/GetAvatarVideo",
+        "api-reference/v2/Video/CreateVideoFromProduct",
+        "api-reference/v2/Video/CreateVideoWithTemplate",
+        "api-reference/v2/Video/GetProductVideo",
+        "api-reference/v2/Video/VideoTranslate",
+        "api-reference/v2/Video/GetTargetLanguages"
+      ]
+    },
+    {
+      "group": "Avatar",
+      "pages": [
+        "api-reference/v2/Avatar/GetPublicAvatars",
+        "api-reference/v2/Avatar/GetCustomAvatars",
+        "api-reference/v2/Avatar/GetPhotoAvatars",
+        "api-reference/v2/Avatar/GeneratePhotoAvatar",
+        "api-reference/v2/Avatar/GetPhotoAvatarStatus"
+      ]
+    },
+    {
+      "group": "Voice",
+      "pages": [
+        "api-reference/v2/Voice/GetVoices",
+        "api-reference/v2/Voice/GetCustomVoices"
+      ]
+    },
+    {
+      "group": "Asset",
+      "pages": [
+        "api-reference/v2/Asset/CreateAIScript",
+        "api-reference/v2/Asset/GetAIScriptResult",
+        "api-reference/v2/Asset/GetMusic",
+        "api-reference/v2/Asset/GetVisualStyles",
+        "api-reference/v2/Asset/UploadAsset"
+      ]
+    },
+    {
+      "group": "Template",
+      "pages": [
+        "api-reference/v2/Template/GetTemplates",
+        "api-reference/v2/Template/GetTemplateById"
+      ]
+    },
+    {
+      "group": "Product",
+      "pages": [
+        "api-reference/v2/Product/CreateProduct",
+        "api-reference/v2/Product/GetProduct"
+      ]
+    },
+    {
+      "group": "User",
+      "pages": [
+        "api-reference/v2/User/GetUserInfo",
+        "api-reference/v2/User/GetRemainingQuota"
+      ]
+    },
+    {
+      "group": "Webhook",
+      "pages": [
+        "api-reference/v2/Webhook/ListWebhookEndpoints",
+        "api-reference/v2/Webhook/AddWebhookEndpoint",
+        "api-reference/v2/Webhook/UpdateWebhookEndpoint",
+        "api-reference/v2/Webhook/DeleteWebhookEndpoint",
+        "api-reference/v2/Webhook/ListWebhookEvents"
+      ]
+    }
+  ],
+
+  "footerSocials": {
+    "x": "https://x.com/Jogg_ai",
+    "facebook": "https://www.facebook.com/profile.php?id=61560344774204",
+    "linkedin": "https://www.linkedin.com/company/jogg-ai",
+    "youtube": "http://www.youtube.com/@joggai",
+    "discord": "https://discord.gg/RwrwZcSRCq"
+  }
+}

@@ -1,0 +1,107 @@
+---
+title: "Upload Media"
+description: "Upload your own media resources."
+---
+
+# Introduction
+
+This document will guide you on how to upload your own media files (such as images or audio) via the [Jogg.ai](http://Jogg.ai) API. After a successful upload, you will receive a [Jogg.ai](http://Jogg.ai)-hosted URL, which can be used in other API calls, for example, as a video background or a custom voice source.
+
+### **Core Concept: Obtaining a Hosted URL**
+
+Why use this API?
+
+When creating a video, certain parameters (like `background_url` or `audio_url`) require a publicly accessible URL. If your media file is not on a public server, you can use this API to upload the file to [Jogg.ai](http://Jogg.ai)'s secure servers to obtain a temporary, usable hosted URL.
+
+Even if you have a publicly accessible URL, we still recommend uploading it to [Jogg.ai](http://Jogg.ai)'s secure servers, as your own URL might cause the task to fail due to network instability.
+
+- **Process:**
+  1. Upload your local file via this API.
+  2. The API returns a JSON response containing a `media_url`.
+  3. In your API request to create a video, use this `media_url` as the value for the corresponding parameter.
+- **Request Format:** File uploads must use the `multipart/form-data` request body format.
+
+---
+
+# Step 1: Obtain sign_url and asset_id
+
+You can upload media to obtain your `sign_url` and `asset_id`.
+
+- `sign_url`: Used as the address to upload media.
+- `asset_id`: Gets the address of the uploaded resource.
+
+Please refer to the [Upload Media](/api-reference/v1/UploadFile/UploadFile) for more details.
+
+Request:
+
+```
+curl --request POST \
+  --url https://api.jogg.ai/v1/upload/asset \
+  --header 'Content-Type: application/json' \
+  --header 'x-api-key: <api-key>' \
+--data-raw '{
+    "filename":"1.jpg"
+}'
+```
+
+Response:
+
+```powershell
+{
+  "rid": "ab3329c49f320dba9a57d742195d930b",
+  "code": 0,
+  "msg": "<string>",
+  "data": {
+    "sign_url": "<string>",
+    "asset_id": "<string>"
+  }
+}
+```
+
+<Tip>
+  You can upload pictures, videos, audio and other media resources.
+</Tip>
+
+# Step 2: Use sign_url to upload the file
+
+Use the following cURL command to upload the file to the server. Make sure to replace \<file-binary-data\> with the actual binary data of the file.
+
+Request:
+
+```powershell
+curl --location --request PUT '<sign_url>' \
+--header 'Content-Type: application/octet-stream' \
+--data-binary '<file-binary-data>'
+```
+
+Pesponse:
+
+```powershell
+{
+    "rid": "1e66bb40e189f7fb2936330863c1468e",
+    "code": 0,
+    "msg": "success"
+}
+```
+
+<Tip>
+  Now` asset_id` is an available address to get resources.
+</Tip>
+
+# Step 3: Use asset_id to get the file
+
+Here's an example:
+
+```powershell
+curl --location --request POST 'https://api.jogg.ai/v1/create_video_from_talking_avatar' \
+--header 'x-api-key: <your-api-key>' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "audio_url": <your-audio-url>, //The media you upload.
+    "aspect_ratio": 0,
+    "screen_style": 1,
+    "avatar_id": 127,
+    "avatar_type": 0,
+    "caption": true   
+}'
+```

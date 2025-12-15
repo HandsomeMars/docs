@@ -1,0 +1,391 @@
+---
+title: "Create Video from Product URL"
+description: "Generate marketing videos automatically from product URLs or descriptions"
+---
+
+## Introduction
+
+Transform product URLs or descriptions into professional marketing videos automatically. JoggAI analyzes your product, generates AI scripts, and creates complete videos with avatars and voiceovers.
+
+### Key Features
+
+<CardGroup cols={2}>
+  <Card title="URL Analysis" icon="link">
+    Extract product info from any URL automatically
+  </Card>
+  <Card title="AI Scripts" icon="wand-magic-sparkles">
+    Generate marketing scripts with AI
+  </Card>
+  <Card title="Visual Styles" icon="palette">
+    Choose from 50+ professional templates
+  </Card>
+  <Card title="Multi-Language" icon="language">
+    Create videos in 40+ languages
+  </Card>
+</CardGroup>
+
+### Workflow Overview
+
+Product video generation is a **3-step asynchronous process**:
+
+<Steps>
+  <Step title="Create Product">
+    Submit product URL or manual details
+  </Step>
+  
+  <Step title="Generate Video">
+    Select avatar, voice, visual style, and script
+  </Step>
+  
+  <Step title="Get Result">
+    Retrieve video via webhook or polling (5-10 minutes)
+  </Step>
+</Steps>
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant API
+    participant AI
+    participant Queue
+    
+    Note over Client,AI: Step 1: Create Product
+    Client->>API: POST /product {url}
+    API->>AI: Extract product info
+    API-->>Client: 200 OK {product_id}
+    
+    Note over Client,Queue: Step 2: Generate Video
+    Client->>API: POST /create_video_from_product
+    API->>Queue: Queue rendering
+    API-->>Client: 200 OK {product_video_id}
+    
+    Note over Queue: Step 3: Processing (5-10 min)
+    Queue->>Queue: Generate video
+    
+    alt Webhook
+        Queue->>Client: POST /webhook {video_url}
+    else Polling
+        Client->>API: GET /product_video/{id}
+        API-->>Client: {video_url, status}
+    end
+```
+
+<Warning>
+The entire process can take **5-10 minutes** depending on video complexity. Use webhooks for best experience.
+</Warning>
+
+---
+
+## Quick Start
+
+### Related API Endpoints
+
+| Endpoint | Purpose | Documentation |
+|----------|---------|---------------|
+| `POST /product` | Create product entry | [API Reference](/api-reference/v2/Product/CreateProduct) |
+| `GET /avatars/public` | Get avatar list | [API Reference](/api-reference/v2/Avatar/GetPublicAvatars) |
+| `GET /voices` | Get voice list | [API Reference](/api-reference/v2/Voice/GetVoices) |
+| `GET /visual_styles` | Get visual styles | [API Reference](/api-reference/v2/Asset/GetVisualStyles) |
+| `POST /create_video_from_product` | Generate video | [API Reference](/api-reference/v2/Video/CreateVideoFromProduct) |
+| `GET /product_video/{id}` | Check status | [API Reference](/api-reference/v2/Video/GetProductVideo) |
+
+### Key Parameters
+
+**Step 1: Create Product**
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `url` | string | * | Product URL (required if no name) |
+| `name` | string | * | Product name (required if no URL) |
+| `description` | string | ❌ | Product description |
+| `target_audience` | string | ❌ | Target audience |
+| `media` | array | ❌ | Product images/videos |
+
+**Step 2: Generate Video**
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `product_id` | string | ✅ | Product ID from Step 1 |
+| `aspect_ratio` | string | ✅ | portrait/landscape/square |
+| `video_length` | string | ✅ | "15"/"30"/"60" seconds |
+| `language` | string | ✅ | Script language (e.g., "english") |
+| `avatar_id` | integer | ✅ | Avatar ID |
+| `avatar_type` | integer | ✅ | 0=Public, 1=Custom |
+| `script_style` | string | ✅ | Script style (e.g., "Storytime") |
+| `visual_style` | string | ❌ | Visual template name |
+| `voice_id` | string | ❌ | Voice ID for TTS |
+| `music_id` | integer | ❌ | Background music ID |
+| `caption` | boolean | ❌ | Enable subtitles |
+
+---
+
+## Code Examples
+
+### Scenario 1: Complete Workflow from URL
+
+Create a product video from a URL in 3 steps:
+
+**Step 1: Submit Product URL**
+
+```bash
+curl --request POST \
+  --url 'https://api.jogg.ai/open/v2/product' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "url": "https://www.amazon.com/dp/B0BX7CVAPM"
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "code": 0,
+  "msg": "Success",
+  "data": {
+    "product_id": "NTIzMzc0NjI5",
+    "name": "Owala FreeSip Water Bottle",
+    "description": "Insulated stainless steel water bottle...",
+    "media": [
+      {
+        "type": 1,
+        "url": "https://m.media-amazon.com/images/I/61wvLrf8ekL._AC_SL1500_.jpg"
+      }
+    ]
+  }
+}
+```
+
+**Step 2: Generate Video**
+
+```bash
+curl --request POST \
+  --url 'https://api.jogg.ai/open/v2/create_video_from_product' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "product_id": "NTIzMzc0NjI5",
+    "aspect_ratio": "portrait",
+    "video_length": "30",
+    "language": "english",
+    "avatar_id": 81,
+    "avatar_type": 0,
+    "script_style": "Storytime",
+    "visual_style": "Simple Product Switch",
+    "caption": true
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "code": 0,
+  "msg": "Success",
+  "data": {
+    "product_video_id": "pv_123456"
+  }
+}
+```
+
+**Step 3: Check Status**
+
+```bash
+curl --request GET \
+  --url 'https://api.jogg.ai/open/v2/product_video/pv_123456' \
+  --header 'x-api-key: YOUR_API_KEY'
+```
+
+**Response (Completed):**
+
+```json
+{
+  "code": 0,
+  "msg": "Success",
+  "data": {
+    "id": "pv_123456",
+    "status": "completed",
+    "video_url": "https://res.jogg.ai/videos/pv_123456.mp4",
+    "cover_url": "https://res.jogg.ai/covers/pv_123456.jpg",
+    "duration": 30
+  }
+}
+```
+
+---
+
+### Scenario 2: Manual Product Entry
+
+Create video without a URL by providing product details:
+
+```bash
+curl --request POST \
+  --url 'https://api.jogg.ai/open/v2/product' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "name": "Premium Yoga Mat",
+    "description": "Eco-friendly yoga mat with superior grip and cushioning. Perfect for all yoga styles.",
+    "target_audience": "Yoga enthusiasts and fitness lovers",
+    "media": [
+      {
+        "type": 1,
+        "name": "product-image.jpg",
+        "url": "https://example.com/yoga-mat.jpg",
+        "description": "Main product image"
+      }
+    ]
+  }'
+```
+
+Then proceed with Step 2 (Generate Video) using the returned `product_id`.
+
+---
+
+### Scenario 3: Custom Script Override
+
+Override the AI-generated script with your own:
+
+```bash
+curl --request POST \
+  --url 'https://api.jogg.ai/open/v2/create_video_from_product' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "product_id": "NTIzMzc0NjI5",
+    "aspect_ratio": "landscape",
+    "video_length": "30",
+    "language": "english",
+    "avatar_id": 81,
+    "avatar_type": 0,
+    "script_style": "Storytime",
+    "override_script": "Check out this amazing water bottle! It keeps your drinks cold for 24 hours and features a unique FreeSip spout. Perfect for the gym or outdoor adventures!",
+    "caption": true
+  }'
+```
+
+<Tip>
+Use `override_script` when you have a specific message or want full control over the narration.
+</Tip>
+
+---
+
+### Scenario 4: Using Custom Template
+
+Apply your custom template to the product video:
+
+```bash
+curl --request POST \
+  --url 'https://api.jogg.ai/open/v2/create_video_from_product' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "product_id": "NTIzMzc0NjI5",
+    "aspect_ratio": "square",
+    "video_length": "15",
+    "language": "english",
+    "avatar_id": 81,
+    "avatar_type": 0,
+    "script_style": "Discovery",
+    "template_id": 1234,
+    "template_type": "custom",
+    "caption": false
+  }'
+```
+
+<Info>
+Get your custom template IDs using [Get Templates API](/api-reference/v2/Template/GetTemplates).
+</Info>
+
+---
+
+## Script Styles Reference
+
+Choose the right script style for your product:
+
+| Style | Best For | Tone |
+|-------|----------|------|
+| **Storytime** | Narrative products | Engaging, story-driven |
+| **Discovery** | New products | Exciting, exploratory |
+| **Don't Worry** | Problem-solving | Reassuring, helpful |
+| **Data** | Tech products | Factual, informative |
+| **Top 3 Reasons** | Feature-rich products | Clear, structured |
+| **Light Marketing** | General products | Friendly, promotional |
+
+---
+
+## Use Case Examples
+
+<AccordionGroup>
+  <Accordion title="E-commerce Product Videos">
+    Automate product video creation for online stores:
+    - Bulk generate videos for entire catalog
+    - Use portrait format for mobile shopping
+    - Enable captions for silent browsing
+    - Try multiple script styles for A/B testing
+  </Accordion>
+  
+  <Accordion title="Social Media Advertising">
+    Create scroll-stopping ads:
+    - Use "Storytime" or "Discovery" styles
+    - Keep videos short (15-30 seconds)
+    - Choose engaging avatars
+    - Add background music for emotion
+  </Accordion>
+  
+  <Accordion title="Marketplace Listings">
+    Enhance Amazon/eBay listings:
+    - Extract info directly from product URLs
+    - Generate in multiple languages for global markets
+    - Use landscape format for desktop viewers
+    - Highlight key features with "Top 3 Reasons"
+  </Accordion>
+  
+  <Accordion title="Dropshipping Business">
+    Scale video content creation:
+    - Batch process product URLs
+    - Customize scripts for your brand voice
+    - Generate localized versions
+    - Use webhook automation for efficiency
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Related Documentation
+
+<CardGroup cols={2}>
+  <Card
+    title="AI Script Generation"
+    icon="wand-magic-sparkles"
+    href="/api-reference/v2/API Documentation/AIScripts"
+  >
+    Generate custom scripts with AI
+  </Card>
+  
+  <Card
+    title="Template Videos"
+    icon="file-video"
+    href="/api-reference/v2/API Documentation/CreateVideoFromTemplate"
+  >
+    Use templates for consistent branding
+  </Card>
+  
+  <Card
+    title="Upload Media"
+    icon="upload"
+    href="/api-reference/v2/API Documentation/UploadMedia"
+  >
+    Add custom product images
+  </Card>
+  
+  <Card
+    title="Webhook Integration"
+    icon="webhook"
+    href="/api-reference/v2/API Documentation/WebhookIntegration"
+  >
+    Automate video delivery
+  </Card>
+</CardGroup>
+

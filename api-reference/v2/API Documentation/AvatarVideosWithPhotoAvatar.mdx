@@ -1,0 +1,232 @@
+---
+title: "Avatar Videos with Photo Avatars"
+description: "Use custom photo avatars created from your own photos"
+---
+
+## Overview
+
+Create personalized avatar videos using custom photo avatars generated from your own portrait photos. Perfect for branded content, personal messaging, or using specific talent.
+
+<Info>
+**Prerequisites:** You must first create a photo avatar using [Create Photo Avatar](/api-reference/v2/API Documentation/CreatePhotoAvatar). For general avatar video creation guide, see [Create Avatar Videos](/api-reference/v2/API Documentation/CreateAvatarVideos).
+</Info>
+
+---
+
+## Prerequisites
+
+Before creating videos with photo avatars:
+
+1. ✅ Create a photo avatar (see [Create Photo Avatar](/api-reference/v2/API Documentation/CreatePhotoAvatar))
+2. ✅ Get the photo avatar `avatar_id`
+3. ✅ Prepare your script
+
+---
+
+## Quick Example
+
+### Step 1: Get Your Photo Avatar ID
+
+List your photo avatars:
+
+```bash
+curl --request GET \
+  --url 'https://api.jogg.ai/open/v2/avatars/photo_avatars' \
+  --header 'x-api-key: YOUR_API_KEY'
+```
+
+**Response:**
+
+```json
+{
+  "code": 0,
+  "msg": "Success",
+  "data": {
+    "avatars": [
+      {
+        "avatar_id": 123,
+        "name": "My Custom Avatar",
+        "status": "completed",
+        "cover_url": "https://res.jogg.ai/avatars/cover_123.jpg"
+      }
+    ]
+  }
+}
+```
+
+---
+
+### Step 2: Create Video with Photo Avatar
+
+Use the photo avatar in video creation:
+
+```bash
+curl --request POST \
+  --url 'https://api.jogg.ai/open/v2/create_video_from_avatar' \
+  --header 'x-api-key: YOUR_API_KEY' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "avatar_id": 123,
+    "avatar_type": 1,
+    "voice_id": "en-US-ChristopherNeural",
+    "script": "Hello! This is my custom photo avatar speaking.",
+    "aspect_ratio": "portrait",
+    "screen_style": 1,
+    "caption": true
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "code": 0,
+  "msg": "Success",
+  "data": {
+    "video_id": "video_123456"
+  }
+}
+```
+
+<Check>
+Set `avatar_type: 1` to indicate this is a custom avatar (photo avatar)
+</Check>
+
+---
+
+## Key Parameters
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `avatar_id` | integer | Your photo avatar ID |
+| `avatar_type` | `1` | **Important:** Must be `1` for custom/photo avatars |
+| `voice_id` | string | Voice ID for text-to-speech |
+| `script` | string | Text for avatar to speak |
+| `aspect_ratio` | string | portrait/landscape/square |
+| `screen_style` | integer | 1=Background, 2=Green screen, 3=WebM |
+
+---
+
+## Use Cases
+
+<AccordionGroup>
+  <Accordion title="Personal Branding">
+    Use your own face in videos:
+    - Create photo avatar from your photo
+    - Generate branded video content
+    - Consistent personal presence
+    - Scale your personal brand
+  </Accordion>
+  
+  <Accordion title="Company Spokesperson">
+    Feature company executives or talent:
+    - Create avatar from CEO or spokesperson photo
+    - Generate company announcements
+    - Consistent company voice
+    - Reduce production time
+  </Accordion>
+  
+  <Accordion title="Multi-Language Content">
+    Speak in languages you don't know:
+    - Create avatar from your photo once
+    - Generate videos in 40+ languages
+    - Maintain your face across languages
+    - Reach global audiences
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Comparison: Public vs Photo Avatars
+
+| Feature | Public Avatars | Photo Avatars |
+|---------|---------------|---------------|
+| **Creation** | Ready to use | Create from photo first |
+| **Customization** | Pre-defined | Your own face |
+| **avatar_type** | `0` | `1` |
+| **Use Case** | Quick, generic | Personal, branded |
+| **Cost** | Standard | May cost more credits |
+
+---
+
+## Tips for Best Results
+
+<Tip>
+**Photo Avatar Quality:**
+- Use high-quality source photos (see [Create Photo Avatar](/api-reference/v2/API Documentation/CreatePhotoAvatar))
+- Ensure photo avatar generation completed successfully
+- Test with short script first
+- Check avatar list for `status: "completed"`
+</Tip>
+
+**Script Recommendations:**
+- Keep scripts natural and conversational
+- Avoid very long scripts (< 2 minutes)
+- Test pronunciation of special terms
+- Use appropriate voice for avatar personality
+
+---
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Avatar not found">
+    **Error**: `Avatar ID does not exist`
+    
+    **Solution:**
+    - List photo avatars to get correct ID
+    - Ensure `avatar_type: 1` is set
+    - Check avatar status is "completed"
+    - Verify avatar belongs to your account
+  </Accordion>
+  
+  <Accordion title="Avatar still processing">
+    **Error**: `Avatar not ready`
+    
+    **Solution:**
+    - Photo avatar generation can take 2-5 minutes
+    - Check status using Get Photo Avatars endpoint
+    - Wait for status to be "completed"
+    - Don't create videos with "processing" avatars
+  </Accordion>
+  
+  <Accordion title="Quality issues">
+    **Issue:** Video quality doesn't look good
+    
+    **Solution:**
+    - Recreate photo avatar with higher quality photo
+    - Ensure source photo meets quality requirements
+    - Use good lighting in source photo
+    - See [Photo Avatar guide](/api-reference/v2/API Documentation/CreatePhotoAvatar) for photo tips
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Related Documentation
+
+<CardGroup cols={2}>
+  <Card
+    title="Create Photo Avatar"
+    icon="image-portrait"
+    href="/api-reference/v2/API Documentation/CreatePhotoAvatar"
+  >
+    Generate avatars from photos
+  </Card>
+  
+  <Card
+    title="Create Avatar Videos"
+    icon="user"
+    href="/api-reference/v2/API Documentation/CreateAvatarVideos"
+  >
+    Main avatar video guide
+  </Card>
+  
+  <Card
+    title="Get Photo Avatars API"
+    icon="users"
+    href="/api-reference/v2/Avatar/GetPhotoAvatars"
+  >
+    List your photo avatars
+  </Card>
+</CardGroup>

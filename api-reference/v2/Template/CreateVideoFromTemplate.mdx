@@ -1,0 +1,121 @@
+---
+title: "Create Video from Your Template"
+description: "Generate videos quickly using pre-designed templates"
+---
+
+## Introduction
+
+Templates provide a fast way to create professional videos with consistent branding. Use JoggAI's template library or create custom templates with your own branding and layout.
+
+<CardGroup cols={2}>
+  <Card title="Faster Creation" icon="bolt">
+    Skip the design process with ready-made templates
+  </Card>
+  <Card title="Consistent Branding" icon="palette">
+    Maintain brand consistency across all videos
+  </Card>
+  <Card title="Batch Processing" icon="layer-group">
+    Generate multiple videos with the same style
+  </Card>
+  <Card title="Customizable" icon="sliders">
+    Adjust colors, fonts, and layout to match your brand
+  </Card>
+</CardGroup>
+
+## Quick Start
+
+### Step 1: Browse Available Templates
+
+```bash
+curl -X GET 'https://api.jogg.ai/open/v2/templates/custom' \
+  -H 'x-api-key: YOUR_API_KEY'
+```
+
+### Step 2: Get Template Details
+
+```bash
+curl -X GET 'https://api.jogg.ai/open/v2/template/custom/tmpl_123' \
+  -H 'x-api-key: YOUR_API_KEY'
+```
+
+### Step 3: Create Video
+
+```bash
+curl -X POST 'https://api.jogg.ai/open/v2/create_video_with_template' \
+  -H 'x-api-key: YOUR_API_KEY' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "template_id": "tmpl_123",
+    "video_name": "Product Showcase",
+    "script": "Check out our amazing product!",
+    "avatar_id": 127,
+    "voice_id": "en-US-ChristopherNeural",
+    "template_data": {
+      "product_name": "Amazing Widget",
+      "product_description": "The best widget on the market",
+      "product_image_url": "https://example.com/widget.jpg"
+    }
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "code": 0,
+  "data": {
+    "video_id": "vid_abc123"
+  }
+}
+```
+
+### Step 4: Get Video Status
+
+```bash
+curl -X GET 'https://api.jogg.ai/open/v2/template_video/vid_abc123' \
+  -H 'x-api-key: YOUR_API_KEY'
+```
+
+## Request Parameters
+
+### Required
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `template_id` | string | Template ID from library |
+| `script` | string | Video narration script |
+| `avatar_id` | number | Avatar ID for the video |
+| `voice_id` | string | Voice ID for narration |
+
+### Optional
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `video_name` | string | Name for your video |
+| `template_data` | object | Custom data for template fields |
+| `aspect_ratio` | number | 0: 16:9, 1: 9:16, 2: 1:1 |
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Get My Templates"
+    icon="folder"
+    href="/api-reference/v2/Template/GetMyTemplate"
+  >
+    View your custom templates
+  </Card>
+  
+  <Card
+    title="AI Scripts"
+    icon="wand-magic-sparkles"
+    href="/api-reference/v2/AI-Scripts/AI-Scripts"
+  >
+    Generate scripts with AI
+  </Card>
+</CardGroup>
+
+## Need Help?
+
+For questions, contact us at [support@jogg.ai](mailto:support@jogg.ai)
+
