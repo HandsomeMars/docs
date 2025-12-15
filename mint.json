@@ -55,15 +55,14 @@
     {
       "group": "Get Started",
       "pages": [
-        "home/WelcometoJoggAI",
-        "home/KeyFeatures",
-        "home/SeeJoggAIinAction"
+        "home/WelcometoJoggAI"
       ]
     },
     {
       "group": "QuickStart",
       "pages": [
         "api-reference/v2/QuickStart/GettingStarted",
+        "api-reference/v2/QuickStart/Pricing",
         "api-reference/v2/QuickStart/ErrorHandling",
         "api-reference/v2/QuickStart/RateLimits"
       ]
@@ -168,5 +167,8 @@
     "linkedin": "https://www.linkedin.com/company/jogg-ai",
     "youtube": "http://www.youtube.com/@joggai",
     "discord": "https://discord.gg/RwrwZcSRCq"
-  }
+  },
+  "customStyles": [
+    "/styles.css"
+  ]
 }

@@ -8,7 +8,7 @@ description: "Use custom photo avatars created from your own photos"
 Create personalized avatar videos using custom photo avatars generated from your own portrait photos. Perfect for branded content, personal messaging, or using specific talent.
 
 <Info>
-**Prerequisites:** You must first create a photo avatar using [Create Photo Avatar](/api-reference/v2/API Documentation/CreatePhotoAvatar). For general avatar video creation guide, see [Create Avatar Videos](/api-reference/v2/API Documentation/CreateAvatarVideos).
+**Prerequisites:** You must first create a photo avatar before using it in videos.
 </Info>
 
 ---
@@ -17,7 +17,7 @@ Create personalized avatar videos using custom photo avatars generated from your
 
 Before creating videos with photo avatars:
 
-1. ✅ Create a photo avatar (see [Create Photo Avatar](/api-reference/v2/API Documentation/CreatePhotoAvatar))
+1. ✅ Create a photo avatar first
 2. ✅ Get the photo avatar `avatar_id`
 3. ✅ Prepare your script
 
@@ -153,7 +153,7 @@ Set `avatar_type: 1` to indicate this is a custom avatar (photo avatar)
 
 <Tip>
 **Photo Avatar Quality:**
-- Use high-quality source photos (see [Create Photo Avatar](/api-reference/v2/API Documentation/CreatePhotoAvatar))
+- Use high-quality source photos
 - Ensure photo avatar generation completed successfully
 - Test with short script first
 - Check avatar list for `status: "completed"`
@@ -197,36 +197,44 @@ Set `avatar_type: 1` to indicate this is a custom avatar (photo avatar)
     - Recreate photo avatar with higher quality photo
     - Ensure source photo meets quality requirements
     - Use good lighting in source photo
-    - See [Photo Avatar guide](/api-reference/v2/API Documentation/CreatePhotoAvatar) for photo tips
+    - See [Photo Avatar guide](/api-reference/v2/API%20Documentation/CreatePhotoAvatar) for photo tips
   </Accordion>
 </AccordionGroup>
 
 ---
 
-## Related Documentation
+## Related APIs
 
 <CardGroup cols={2}>
   <Card
-    title="Create Photo Avatar"
-    icon="image-portrait"
-    href="/api-reference/v2/API Documentation/CreatePhotoAvatar"
-  >
-    Generate avatars from photos
-  </Card>
-  
-  <Card
-    title="Create Avatar Videos"
-    icon="user"
-    href="/api-reference/v2/API Documentation/CreateAvatarVideos"
-  >
-    Main avatar video guide
-  </Card>
-  
-  <Card
-    title="Get Photo Avatars API"
+    title="Get Photo Avatars"
     icon="users"
     href="/api-reference/v2/Avatar/GetPhotoAvatars"
   >
     List your photo avatars
+  </Card>
+  
+  <Card
+    title="Get Avatar Video"
+    icon="video"
+    href="/api-reference/v2/Video/GetAvatarVideo"
+  >
+    Check video generation status
+  </Card>
+  
+  <Card
+    title="Get Voices"
+    icon="microphone"
+    href="/api-reference/v2/Voice/GetVoices"
+  >
+    Browse available voices
+  </Card>
+  
+  <Card
+    title="Upload Asset"
+    icon="upload"
+    href="/api-reference/v2/Asset/UploadAsset"
+  >
+    Upload custom media files
   </Card>
 </CardGroup>

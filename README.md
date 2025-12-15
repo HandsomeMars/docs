@@ -26,9 +26,7 @@ mintlify dev
 ├── mint.json
 │
 ├── home/                          # 首页文件
-│   ├── WelcometoJoggAI.mdx
-│   ├── KeyFeatures.mdx
-│   └── SeeJoggAIinAction.mdx
+│   └── WelcometoJoggAI.mdx        (包含 Key Features 和视频展示)
 │
 ├── api-reference/
 │   ├── v1/                        # API v1（维护中）
@@ -38,8 +36,12 @@ mintlify dev
 │   │   └── openapi.json
 │   │
 │   └── v2/                        # API v2（推荐）⭐
-│       ├── QuickStart/
-│       ├── API Documentation/     (14个教程)
+│       ├── QuickStart/            (4个)
+│       │   ├── GettingStarted.mdx
+│       │   ├── Pricing.mdx
+│       │   ├── ErrorHandling.mdx
+│       │   └── RateLimits.mdx
+│       ├── API Documentation/     (12个教程)
 │       ├── Video/                 (7个)
 │       ├── Avatar/                (5个)
 │       ├── Voice/                 (2个)
@@ -47,6 +49,7 @@ mintlify dev
 │       ├── Template/              (3个)
 │       ├── Product/               (2个)
 │       ├── User/                  (2个)
+│       ├── Webhook/               (5个)
 │       └── openapi-v2.yaml
 │
 ├── images/                        # 文档图片 (23个)

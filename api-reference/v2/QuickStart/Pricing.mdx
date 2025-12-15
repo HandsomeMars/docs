@@ -1,0 +1,71 @@
+---
+title: "Pricing"
+description: "API credit consumption and pricing"
+---
+
+## API Credit Consumption
+
+JoggAI API uses a credit-based pricing model. Credits are consumed based on the type of operation and resource usage.
+
+---
+
+## Credit Pricing Table
+
+| Service | Consumption | Details |
+|---------|-------------|---------|
+| **Video Generation** | 1 credit per 2 minutes | Videos less than 2 minutes also consume 1 credit |
+| **Preview Video** | 0.5 credit per 2 minutes | Videos less than 2 minutes also consume 0.5 credit |
+| **AI Scripts** | 0.2 credit per call | Per API request |
+| **Image Generation** | 0.05 credit per image | Single image generation |
+| **Image Generation (Batch)** | 0.2 credit per call | Generates 4 images |
+| **Motion 1.0** | 2 credits | Per motion generation |
+| **Motion 2.0** | 2 credits | Per motion generation |
+| **Motion 2.0 Pro** | 3 credits | Per motion generation |
+
+---
+
+## Pricing Examples
+
+<AccordionGroup>
+  <Accordion title="Video Generation Examples">
+    - **30 seconds video:** 1 credit
+    - **1 minute video:** 1 credit
+    - **2 minutes video:** 1 credit
+    - **3 minutes video:** 2 credits
+    - **5 minutes video:** 3 credits
+  </Accordion>
+
+  <Accordion title="Preview Video Examples">
+    - **30 seconds preview:** 0.5 credit
+    - **1 minute preview:** 0.5 credit
+    - **2 minutes preview:** 0.5 credit
+    - **3 minutes preview:** 1 credit
+  </Accordion>
+
+  <Accordion title="Image Generation Examples">
+    - **Single image:** 0.05 credit
+    - **Batch (4 images):** 0.2 credit
+    - **10 single images:** 0.5 credit
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Check Your Balance
+
+You can check your remaining credits via:
+
+- **Dashboard:** Visit [app.jogg.ai](https://app.jogg.ai)
+- **API:** Use the [Get User Info](/api-reference/v2/User/GetUserInfo) endpoint
+- **API:** Use the [Get Remaining Quota](/api-reference/v2/User/GetRemainingQuota) endpoint
+
+<Note>
+Credits are deducted immediately when a request is processed, not when it completes.
+</Note>
+
+---
+
+## Need More Credits?
+
+For enterprise pricing or volume discounts, contact [support@jogg.ai](mailto:support@jogg.ai).
+
